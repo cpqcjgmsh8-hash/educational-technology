@@ -89,7 +89,7 @@ function sendFloatingAIMessage() {
     const responseText = botMsg.querySelector('#floatingAIResponse');
     floatingAIFullContent = '';
 
-    fetch('http://localhost:8000/api/chat/stream', {
+    fetch('https://educational-technology-production-dc54.up.railway.app/api/chat/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: 'student_001', message: message })

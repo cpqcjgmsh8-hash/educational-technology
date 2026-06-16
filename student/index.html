@@ -504,7 +504,7 @@
             }, 500);
             const responseText = botMsg.querySelector('#floatingAIResponse');
             floatingAIFullContent = '';
-            fetch('http://localhost:8000/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: 'student_001', message: message }) })
+            fetch('https://educational-technology-production-dc54.up.railway.app/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: 'student_001', message: message }) })
             .then(response => {
                 if (!response.ok) throw new Error('API请求失败');
                 const reader = response.body.getReader();
