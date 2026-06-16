@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学生端首页 - 国家开放大学教育技术学课程</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        .step.active {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        .step.completed {
+            color: #48bb78;
+        }
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--hover-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+        .step.active .step-number {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .step.completed .step-number {
+            background: #48bb78;
+            color: white;
+        }
+        .step-arrow {
+            color: var(--text-light);
+        }
+        .situation-card {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .situation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .situation-card.selected {
+            border: 2px solid var(--secondary-color);
+            background: var(--hover-bg);
+        }
+        .path-card {
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            padding: 1.5rem;
+        }
+        .path-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .path-card.selected {
+            border: 2px solid var(--secondary-color);
+            background: var(--hover-bg);
+        }
+        .path-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .chapter-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text-color);
+            border: 1px solid var(--hover-bg);
+        }
+        .chapter-link:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+        .chapter-link .chapter-num {
+            width: 36px;
+            height: 36px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .chapter-link:hover .chapter-num {
+            background: white;
+            color: var(--secondary-color);
+        }
+        .chapter-link .chapter-info h4 {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        .chapter-link .chapter-info p {
+            margin: 0.25rem 0 0;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+        .chapter-link:hover .chapter-info p {
+            color: rgba(255,255,255,0.8);
+        }
+        .objectives-list {
+            background: var(--hover-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .objectives-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+        .objectives-list li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教育技术学</h1>
+                    <p>欢迎，张同学</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">主导航</div>
+                <a href="index.html" class="nav-item active">
+                    <span class="icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a href="course.html" class="nav-item">
+                    <span class="icon">📖</span>
+                    <span>课程</span>
+                </a>
+                <a href="community.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>社群</span>
+                </a>
+                <a href="ai-center.html" class="nav-item">
+                    <span class="icon">🤖</span>
+                    <span>智能体中心</span>
+                </a>
+                <a href="report.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学习报告</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>个性化学习空间</h1>
+                <p>按照您的需求，定制专属学习路径</p>
+            </div>
+
+            <!-- 步骤指示器 -->
+            <div class="step-indicator">
+                <div class="step active" id="step1Indicator">
+                    <div class="step-number">1</div>
+                    <span>选择情境</span>
+                </div>
+                <span class="step-arrow">→</span>
+                <div class="step" id="step2Indicator">
+                    <div class="step-number">2</div>
+                    <span>选择路径</span>
+                </div>
+                <span class="step-arrow">→</span>
+                <div class="step" id="step3Indicator">
+                    <div class="step-number">3</div>
+                    <span>开始学习</span>
+                </div>
+            </div>
+
+            <!-- 步骤1：选择情境性问题 -->
+            <div class="card" id="step1">
+                <h2 class="card-title">🎯 选择情境性问题</h2>
+                <p style="margin-bottom: 1.5rem; color: var(--text-light);">
+                    请选择一个您关心的情境性问题，系统将为您推荐最合适的学习内容
+                </p>
+                <div class="card-grid">
+                    <div class="situation-card" onclick="selectSituation(1)">
+                        <h3>🎯 如何设计一堂高效的在线互动课？</h3>
+                        <p>探索在线教学互动的设计与实施策略</p>
+                    </div>
+                    <div class="situation-card" onclick="selectSituation(2)">
+                        <h3>📱 如何利用AI工具提升学习效率？</h3>
+                        <p>学习如何运用人工智能技术辅助自主学习</p>
+                    </div>
+                    <div class="situation-card" onclick="selectSituation(3)">
+                        <h3>🎮 如何设计有趣的学习游戏？</h3>
+                        <p>游戏化学习理念与教学游戏设计实践</p>
+                    </div>
+                    <div class="situation-card" onclick="selectSituation(4)">
+                        <h3>📊 如何进行学习数据分析？</h3>
+                        <p>教育大数据分析与学习者建模方法</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 步骤2：选择学习路径 -->
+            <div class="card" id="step2" style="display: none;">
+                <h2 class="card-title">🛤️ 选择学习路径</h2>
+                <p style="margin-bottom: 1rem; color: var(--text-light);">
+                    您选择的问题：<strong id="selectedSituationText"></strong>
+                </p>
+                <p style="margin-bottom: 1.5rem; color: var(--text-light);">
+                    请选择您的学习路径，不同路径将提供差异化的学习内容：
+                </p>
+                <div class="card-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <div class="path-card" onclick="selectPath(1)">
+                        <div class="path-icon">🎯</div>
+                        <h3>目标导向</h3>
+                        <p>系统化学习，按知识点逐步深入</p>
+                    </div>
+                    <div class="path-card" onclick="selectPath(2)">
+                        <div class="path-icon">🔍</div>
+                        <h3>深度探究</h3>
+                        <p>针对每个知识点进行深度研究</p>
+                    </div>
+                    <div class="path-card" onclick="selectPath(3)">
+                        <div class="path-icon">💭</div>
+                        <h3>问题解决</h3>
+                        <p>以问题为驱动，在解决问题中学习</p>
+                    </div>
+                    <div class="path-card" onclick="selectPath(4)">
+                        <div class="path-icon">⭐</div>
+                        <h3>兴趣驱动</h3>
+                        <p>根据个人兴趣自由探索学习内容</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 步骤3：学习目标与推荐章节 -->
+            <div class="card" id="step3" style="display: none;">
+                <h2 class="card-title">📚 学习目标与推荐章节</h2>
+                <div id="objectivesSection"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 学习情境数据
+        const situationData = {
+            1: {
+                title: "如何设计一堂高效的在线互动课？",
+                objectives: [
+                    "理解在线教学互动的基本原理和设计原则",
+                    "掌握激发学习者参与和动机的策略（ARCS模型）",
+                    "学会设计有效的在线讨论和协作活动",
+                    "了解实时互动工具的选择和使用方法",
+                    "能够评估在线互动课的效果并进行改进"
+                ],
+                chapters: [
+                    { num: 3, title: "学习目标、教学法与技术的关联", desc: "学习目标类型与教学策略" },
+                    { num: 5, title: "教育技术的用户视角", desc: "用户体验与ARCS动机设计" },
+                    { num: 6, title: "学习者体验", desc: "学习者体验评估指标" }
+                ]
+            },
+            2: {
+                title: "如何利用AI工具提升学习效率？",
+                objectives: [
+                    "了解人工智能在教育领域的主要应用形式",
+                    "掌握智能辅导系统的基本原理和使用方法",
+                    "学会利用AI工具进行个性化学习",
+                    "了解学习分析技术如何支持学习决策",
+                    "能够批判性评估AI教育应用的伦理问题"
+                ],
+                chapters: [
+                    { num: 6, title: "学习者体验", desc: "技术增强的学习体验" },
+                    { num: 13, title: "教育技术的新兴问题", desc: "AI与学习分析技术" }
+                ]
+            },
+            3: {
+                title: "如何设计有趣的学习游戏？",
+                objectives: [
+                    "理解游戏化学习的理论基础和核心概念",
+                    "掌握游戏元素融入教学设计的方法",
+                    "了解游戏化设计的关键要素",
+                    "学会平衡学习目标与游戏娱乐性",
+                    "能够设计和评估教学游戏的有效性"
+                ],
+                chapters: [
+                    { num: 2, title: "技术背景下的学习", desc: "学习理论与游戏化" },
+                    { num: 8, title: "学习活动与教学系统设计", desc: "ADDIE与教学游戏设计" }
+                ]
+            },
+            4: {
+                title: "如何进行学习数据分析？",
+                objectives: [
+                    "理解学习分析的基本概念和研究框架",
+                    "掌握学习者建模的基本方法和技能",
+                    "学会收集、整理和分析学习行为数据",
+                    "了解数据可视化在学习分析中的应用",
+                    "能够基于数据分析结果提出教学改进建议"
+                ],
+                chapters: [
+                    { num: 6, title: "学习者体验", desc: "学习者建模与评估" },
+                    { num: 13, title: "教育技术的新兴问题", desc: "学习分析技术" }
+                ]
+            }
+        };
+
+        // 学习路径数据
+        const pathData = {
+            1: { name: "目标导向", icon: "🎯" },
+            2: { name: "深度探究", icon: "🔍" },
+            3: { name: "问题解决", icon: "💭" },
+            4: { name: "兴趣驱动", icon: "⭐" }
+        };
+
+        let currentSituation = null;
+        let currentPath = null;
+
+        function updateStepIndicator(step) {
+            for (let i = 1; i <= 3; i++) {
+                const indicator = document.getElementById('step' + i + 'Indicator');
+                if (i < step) {
+                    indicator.className = 'step completed';
+                } else if (i === step) {
+                    indicator.className = 'step active';
+                } else {
+                    indicator.className = 'step';
+                }
+            }
+        }
+
+        function selectSituation(id) {
+            currentSituation = id;
+            const data = situationData[id];
+
+            // 更新选中状态
+            document.querySelectorAll('.situation-card').forEach((card, index) => {
+                card.classList.toggle('selected', index + 1 === id);
+            });
+
+            // 显示步骤2
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('selectedSituationText').textContent = data.title;
+            updateStepIndicator(2);
+
+            // 滚动到步骤2
+            document.getElementById('step2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function selectPath(id) {
+            currentPath = id;
+
+            // 更新选中状态
+            document.querySelectorAll('.path-card').forEach((card, index) => {
+                card.classList.toggle('selected', index + 1 === id);
+            });
+
+            // 显示步骤3
+            showObjectives();
+            document.getElementById('step3').style.display = 'block';
+            updateStepIndicator(3);
+
+            // 滚动到步骤3
+            document.getElementById('step3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function showObjectives() {
+            const data = situationData[currentSituation];
+            const path = pathData[currentPath];
+            const section = document.getElementById('objectivesSection');
+
+            let html = `
+                <div style="margin-bottom: 2rem;">
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">
+                        学习路径：<strong>${path.icon} ${path.name}</strong>
+                    </p>
+                    <h3 style="color: var(--secondary-color); margin-bottom: 1rem;">${data.title}</h3>
+
+                    <div class="objectives-list">
+                        <h4 style="margin-bottom: 0.75rem;">📌 学习目标</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+            `;
+
+            data.objectives.forEach((obj, i) => {
+                html += `
+                    <li>
+                        <span style="color: var(--secondary-color); font-weight: bold;">${i + 1}.</span>
+                        <span>${obj}</span>
+                    </li>
+                `;
+            });
+
+            html += `
+                        </ul>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem;">📖 推荐学习章节（点击即可进入学习）</h4>
+                <div class="chapter-list">
+            `;
+
+            data.chapters.forEach((ch) => {
+                html += `
+                    <a href="text-learning.html?chapter=${ch.num}&page=1" class="chapter-link">
+                        <div class="chapter-num">${ch.num}</div>
+                        <div class="chapter-info">
+                            <h4>第${ch.num}章：${ch.title}</h4>
+                            <p>${ch.desc}</p>
+                        </div>
+                        <span style="margin-left: auto;">→</span>
+                    </a>
+                `;
+            });
+
+            html += `
+                </div>
+
+                <div style="margin-top: 2rem; text-align: center;">
+                    <a href="course.html" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1rem; text-decoration: none;">
+                        查看全部13章课程 →
+                    </a>
+                </div>
+            `;
+
+            section.innerHTML = html;
+        }
+    </script>
+    <script>
+        const floatingAIHTML = `
+    <div id="floatingAI" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+        <div id="floatingAIBtn" onclick="toggleFloatingAI()" style="width: 56px; height: 56px; background: linear-gradient(135deg, #1a365d, #2d4a6f); border-radius: 50%; box-shadow: 0 4px 16px rgba(26,54,93,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.3s, box-shadow 0.3s;" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 20px rgba(26,54,93,0.5)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 16px rgba(26,54,93,0.4)';">🤖</div>
+        <div id="floatingAIPanel" style="display: none; position: absolute; bottom: 70px; right: 0; width: 380px; height: 520px; background: white; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); overflow: hidden; flex-direction: column;">
+            <div style="background: linear-gradient(135deg, #1a365d, #2d4a6f); color: white; padding: 1rem; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-size: 1.5rem;">🤖</span>
+                    <div><div style="font-weight: bold;">学习伙伴</div><div style="font-size: 0.7rem; opacity: 0.8;">在线</div></div>
+                </div>
+                <button onclick="toggleFloatingAI()" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; padding: 0.25rem;">✕</button>
+            </div>
+            <div id="floatingAIMessages" style="flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                    <div style="width: 32px; height: 32px; background: #48bb78; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0;">📚</div>
+                    <div style="background: #f7fafc; padding: 0.75rem; border-radius: 8px; border-top-left-radius: 2px; max-width: 80%; font-size: 0.85rem; line-height: 1.5;">你好！我是学习伙伴，有什么可以帮你的吗？</div>
+                </div>
+            </div>
+            <div style="padding: 0.75rem; border-top: 1px solid #eee; display: flex; gap: 0.5rem;">
+                <input type="text" id="floatingAIInput" placeholder="输入问题..." style="flex: 1; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 0.85rem;" onkeypress="if(event.key==='Enter') sendFloatingAIMessage()">
+                <button onclick="sendFloatingAIMessage()" style="background: #1a365d; color: white; border: none; border-radius: 8px; padding: 0.75rem 1rem; cursor: pointer; font-size: 0.85rem;">发送</button>
+            </div>
+        </div>
+    </div>
+`;
+        document.write(floatingAIHTML);
+        function toggleFloatingAI() {
+            const panel = document.getElementById('floatingAIPanel');
+            const btn = document.getElementById('floatingAIBtn');
+            if (panel.style.display === 'none') { panel.style.display = 'flex'; btn.textContent = '✕'; }
+            else { panel.style.display = 'none'; btn.textContent = '🤖'; }
+        }
+        let floatingAIFullContent = '';
+        function sendFloatingAIMessage() {
+            const input = document.getElementById('floatingAIInput');
+            const message = input.value.trim();
+            if (!message) return;
+            const chatMessages = document.getElementById('floatingAIMessages');
+            const userMsg = document.createElement('div');
+            userMsg.style.cssText = 'display: flex; gap: 0.75rem; align-items: flex-start; justify-content: flex-end;';
+            userMsg.innerHTML = `<div style="background: #1a365d; color: white; padding: 0.75rem; border-radius: 8px; border-top-right-radius: 2px; max-width: 80%; font-size: 0.85rem;">${message}</div><div style="width: 32px; height: 32px; background: #1a365d; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0;">👤</div>`;
+            chatMessages.appendChild(userMsg);
+            const botMsg = document.createElement('div');
+            botMsg.style.cssText = 'display: flex; gap: 0.75rem; align-items: flex-start;';
+            botMsg.innerHTML = `<div style="width: 32px; height: 32px; background: #48bb78; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0;">📚</div><div style="background: #f7fafc; padding: 0.75rem; border-radius: 8px; border-top-left-radius: 2px; max-width: 80%; font-size: 0.85rem;" id="floatingAIResponse"><span class="thinking-dots">正在思考<span>.</span></span></div>`;
+            chatMessages.appendChild(botMsg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            input.value = '';
+            let thinkingInterval = setInterval(() => {
+                const dots = botMsg.querySelector('.thinking-dots');
+                if (dots) { const text = dots.textContent; dots.innerHTML = text.endsWith('...') ? '正在思考' : text + '.'; }
+            }, 500);
+            const responseText = botMsg.querySelector('#floatingAIResponse');
+            floatingAIFullContent = '';
+            fetch('http://localhost:8000/api/chat/stream', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: 'student_001', message: message }) })
+            .then(response => {
+                if (!response.ok) throw new Error('API请求失败');
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) { clearInterval(thinkingInterval); return; }
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data:')) {
+                                try {
+                                    const data = JSON.parse(line.slice(5));
+                                    if (data.content) { clearInterval(thinkingInterval); floatingAIFullContent += data.content; responseText.innerHTML = `<div style="white-space: pre-wrap;">${floatingAIFullContent}<span class="cursor">|</span></div>`; chatMessages.scrollTop = chatMessages.scrollHeight; }
+                                    if (data.done) { responseText.innerHTML = `<div style="white-space: pre-wrap;">${floatingAIFullContent}</div>`; chatMessages.scrollTop = chatMessages.scrollHeight; }
+                                    if (data.error) { clearInterval(thinkingInterval); responseText.innerHTML = `抱歉出现问题: ${data.error}`; }
+                                } catch (e) {}
+                            }
+                        }
+                        if (!done) read();
+                    });
+                }
+                read();
+            })
+            .catch(error => { clearInterval(thinkingInterval); responseText.innerHTML = `连接失败: ${error.message}`; });
+        }
+    </script>
+</body>
+</html>

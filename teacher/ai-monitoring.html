@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体监控 - 国家开放大学教育技术学课程</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教师端</h1>
+                    <p>张老师</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">教学管理</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学情总览</span>
+                </a>
+                <a href="course-management.html" class="nav-item">
+                    <span class="icon">📚</span>
+                    <span>课程管理</span>
+                </a>
+                <a href="collaboration.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>协作分析</span>
+                </a>
+                <a href="ai-monitoring.html" class="nav-item active">
+                    <span class="icon">🤖</span>
+                    <span>智能体监控</span>
+                </a>
+                <a href="suggestions.html" class="nav-item">
+                    <span class="icon">💡</span>
+                    <span>教学改进建议</span>
+                </a>
+            </div>
+            <div class="nav-section" style="margin-top: auto;">
+                <div class="nav-section-title">返回</div>
+                <a href="../index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>返回首页</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>智能体监控</h1>
+                <p>监控AI智能体运行状态和使用情况</p>
+            </div>
+
+            <div class="agent-monitor-grid">
+                <div class="monitor-card">
+                    <div class="monitor-header">
+                        <div class="monitor-avatar">📚</div>
+                        <div class="monitor-info">
+                            <h4>学习伙伴</h4>
+                            <p>Bot ID: 7646332369854627866</p>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <span class="agent-status online">运行中</span>
+                    </div>
+                    <div class="monitor-stats">
+                        <div class="monitor-stat">
+                            <div class="value">156</div>
+                            <div class="label">今日对话</div>
+                        </div>
+                        <div class="monitor-stat">
+                            <div class="value">89%</div>
+                            <div class="label">满意度</div>
+                        </div>
+                        <div class="monitor-stat">
+                            <div class="value">1.2s</div>
+                            <div class="label">响应时间</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary" style="width: 100%;">查看详情</button>
+                    </div>
+                </div>
+
+                <div class="monitor-card">
+                    <div class="monitor-header">
+                        <div class="monitor-avatar">👨‍🏫</div>
+                        <div class="monitor-info">
+                            <h4>助教</h4>
+                            <p>开发中 - 预计下月上线</p>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <span class="agent-status reserved">开发中</span>
+                    </div>
+                    <div class="monitor-stats">
+                        <div class="monitor-stat">
+                            <div class="value">--</div>
+                            <div class="label">对话数</div>
+                        </div>
+                        <div class="monitor-stat">
+                            <div class="value">--</div>
+                            <div class="label">满意度</div>
+                        </div>
+                        <div class="monitor-stat">
+                            <div class="value">--</div>
+                            <div class="label">响应时间</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-secondary" style="width: 100%;" disabled>即将上线</button>
+                    </div>
+                </div>
+
+                <div class="monitor-card">
+                    <div class="monitor-header">
+                        <div class="monitor-avatar">🎓</div>
+                        <div class="monitor-info">
+                            <h4>老师</h4>
+                            <p>开发中 - 预计下月上线</p>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <span class="agent-status reserved">开发中</span>
+                    </div>
+                    <div class="monitor-stats">
+                        <div class="monitor-stat">
+                            <div class="value">--</div>
+                            <div class="label">对话数</div>
+                        </div>
+                        <div class="monitor-stat">
+                            <div class="value">--</div>
+                            <div class="label">满意度</div>
+                        </div>
+                        <div class="monitor-stat">
+                            <div class="value">--</div>
+                            <div class="label">响应时间</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-secondary" style="width: 100%;" disabled>即将上线</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h2 class="card-title">📊 学习伙伴对话统计</h2>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                    <div style="text-align: center; padding: 1.5rem; background: var(--hover-bg); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary-color);">1,245</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">总对话数</div>
+                    </div>
+                    <div style="text-align: center; padding: 1.5rem; background: var(--hover-bg); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary-color);">48</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">使用学生数</div>
+                    </div>
+                    <div style="text-align: center; padding: 1.5rem; background: var(--hover-bg); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary-color);">92%</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">问题解决率</div>
+                    </div>
+                    <div style="text-align: center; padding: 1.5rem; background: var(--hover-bg); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: bold; color: var(--secondary-color);">4.5/5</div>
+                        <div style="font-size: 0.85rem; color: var(--text-light);">平均评分</div>
+                    </div>
+                </div>
+
+                <h4 style="font-size: 0.9rem; color: var(--text-color); margin-bottom: 1rem;">高频问题类型</h4>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <div style="flex: 1; min-width: 150px; padding: 1rem; background: var(--hover-bg); border-radius: 6px;">
+                        <div style="font-size: 0.85rem; color: var(--text-color); margin-bottom: 0.5rem;">课程内容咨询</div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">占比 45%</div>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; padding: 1rem; background: var(--hover-bg); border-radius: 6px;">
+                        <div style="font-size: 0.85rem; color: var(--text-color); margin-bottom: 0.5rem;">作业问题</div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">占比 28%</div>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; padding: 1rem; background: var(--hover-bg); border-radius: 6px;">
+                        <div style="font-size: 0.85rem; color: var(--text-color); margin-bottom: 0.5rem;">学习方法咨询</div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">占比 18%</div>
+                    </div>
+                    <div style="flex: 1; min-width: 150px; padding: 1rem; background: var(--hover-bg); border-radius: 6px;">
+                        <div style="font-size: 0.85rem; color: var(--text-color); margin-bottom: 0.5rem;">其他问题</div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">占比 9%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">🔧 智能体配置</h2>
+                <div style="padding: 1rem; background: var(--hover-bg); border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 0.25rem;">学习伙伴智能体</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-light);">Bot ID: 7646332369854627866</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary">编辑配置</button>
+                            <button class="btn btn-secondary">查看日志</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 1rem; background: var(--hover-bg); border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 0.25rem;">助教智能体</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-light);">状态：开发中</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" disabled>编辑配置</button>
+                            <button class="btn btn-secondary" disabled>查看日志</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 1rem; background: var(--hover-bg); border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="color: var(--text-color); margin-bottom: 0.25rem;">老师智能体</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-light);">状态：开发中</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" disabled>编辑配置</button>
+                            <button class="btn btn-secondary" disabled>查看日志</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

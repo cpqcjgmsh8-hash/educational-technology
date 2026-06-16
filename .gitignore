@@ -1,0 +1,24 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+*.docx
+*.xlsx
+*.pptx
+新建*.txt
+
+# 静态资源不部署到 Railway（太大）
+resource/
+
+# server 目录下不需要的文件
+server/node_modules/
+server/start.sh
+server/start.bat
+server/README.md
+server/package.json
+server/package-lock.json
+
+# 其他
+.git/

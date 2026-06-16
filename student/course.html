@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程学习 - 国家开放大学教育技术学课程</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .chapter-dropdown {
+            display: none;
+            margin-top: 0.75rem;
+        }
+        .chapter-dropdown.active {
+            display: block;
+        }
+        .chapter-dropdown-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        .chapter-dropdown-item {
+            display: block;
+            width: 90%;
+            margin: 0 auto;
+            padding: 0;
+            background: var(--hover-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s;
+            border-radius: 8px;
+        }
+        .chapter-dropdown-item:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .chapter-dropdown-item .item-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+        .chapter-dropdown-item .item-icon {
+            font-size: 1.1rem;
+        }
+        .chapter-dropdown-item .item-text {
+            font-size: 0.85rem;
+        }
+        .course-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .course-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .course-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .course-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .course-number {
+            width: 36px;
+            height: 36px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .course-details {
+            flex: 1;
+            text-align: left;
+        }
+        .course-details h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.15rem;
+            text-align: left;
+            font-weight: bold;
+        }
+        .course-details p {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin: 0;
+            text-align: left;
+        }
+        .course-meta {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.3rem;
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+        .course-progress {
+            width: 100%;
+            height: 4px;
+            background: var(--hover-bg);
+            border-radius: 2px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+        .course-progress-fill {
+            height: 100%;
+            background: var(--secondary-color);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+        .expand-icon {
+            font-size: 1rem;
+            transition: transform 0.3s;
+        }
+        .course-item.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        .page-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .page-header p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin: 0;
+        }
+    </style>
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教育技术学</h1>
+                    <p>课程学习</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">主导航</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a href="course.html" class="nav-item active">
+                    <span class="icon">📖</span>
+                    <span>课程</span>
+                </a>
+                <a href="community.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>社群</span>
+                </a>
+                <a href="ai-center.html" class="nav-item">
+                    <span class="icon">🤖</span>
+                    <span>智能体中心</span>
+                </a>
+                <a href="report.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学习报告</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>课程学习</h1>
+                <p>教育技术学专业课程 - 共13个章节，点击章节展开学习内容</p>
+            </div>
+
+            <div class="course-list">
+                <!-- 第一部分：介绍与概述 -->
+                <div class="course-item" onclick="toggleChapter(this, 1)">
+                    <div class="course-header">
+                        <div class="course-number">1</div>
+                        <div class="course-details">
+                            <h4>教育技术学导论</h4>
+                            <p>教育技术的基本概念、历史发展、研究范畴与实践应用</p>
+                            <div class="course-meta">
+                                <span>🕐 约3小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=1&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育技术学概述与定义</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=1&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育技术的历史发展</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=1&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育技术的范围与维度</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=1" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 2)">
+                    <div class="course-header">
+                        <div class="course-number">2</div>
+                        <div class="course-details">
+                            <h4>技术背景下的学习</h4>
+                            <p>学习理论（行为主义、认知主义、建构主义）与技术增强学习</p>
+                            <div class="course-meta">
+                                <span>🕐 约2.5小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=2&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">学习理论概述</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=2&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">行为主义与认知主义</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=2&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">建构主义与技术增强学习</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=2" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 3)">
+                    <div class="course-header">
+                        <div class="course-number">3</div>
+                        <div class="course-details">
+                            <h4>学习目标、教学法与技术的关联</h4>
+                            <p>教学策略与学习目标的链接，技术选择原则</p>
+                            <div class="course-meta">
+                                <span>🕐 约2小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=3&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">学习目标类型与教学策略</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=3&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育用途的技术类型</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=3&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">技术选择原则</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=3" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第二部分：教育技术学视角 -->
+                <div class="course-item" onclick="toggleChapter(this, 4)">
+                    <div class="course-header">
+                        <div class="course-number">4</div>
+                        <div class="course-details">
+                            <h4>教育技术的系统视角</h4>
+                            <p>系统思维、教育系统与教育技术的系统方法</p>
+                            <div class="course-meta">
+                                <span>🕐 约2小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=4" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=4&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">系统思维导论</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=4&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育系统与典型教育技术系统</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=4&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育技术的五个阶段</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=4" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 5)">
+                    <div class="course-header">
+                        <div class="course-number">5</div>
+                        <div class="course-details">
+                            <h4>教育技术的用户视角</h4>
+                            <p>用户体验、用户中心设计与学习者中心设计</p>
+                            <div class="course-meta">
+                                <span>🕐 约2小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=5" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=5&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">用户体验基础</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=5&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">用户中心设计与学习者中心设计</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=5&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">ARCS动机设计模型</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=5" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 6)">
+                    <div class="course-header">
+                        <div class="course-number">6</div>
+                        <div class="course-details">
+                            <h4>学习者体验</h4>
+                            <p>学习经验要素、教育技术分类与评估指标</p>
+                            <div class="course-meta">
+                                <span>🕐 约2小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=6" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=6&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">经验与学习者体验</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=6&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育技术分类与有意义学习体验原则</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=6&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">学习者体验评估指标</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=6" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 7)">
+                    <div class="course-header">
+                        <div class="course-number">7</div>
+                        <div class="course-details">
+                            <h4>教育技术的社会学习视角</h4>
+                            <p>社会学习理论、学习社区构建与社会学习分析</p>
+                            <div class="course-meta">
+                                <span>🕐 约2小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=7" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=7&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">社会学习定义与优势</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=7&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">学习社区与小组构建管理</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=7&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">社会学习分析与测量</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=7" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第三部分：教育技术设计 -->
+                <div class="course-item" onclick="toggleChapter(this, 8)">
+                    <div class="course-header">
+                        <div class="course-number">8</div>
+                        <div class="course-details">
+                            <h4>学习活动与教学系统设计</h4>
+                            <p>学习活动设计、ADDIE模型与教学系统设计</p>
+                            <div class="course-meta">
+                                <span>🕐 约3小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=8" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=8&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">学习活动设计与布鲁姆分类学</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=8&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">认知负荷理论与多媒体学习原则</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=8&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">ADDIE模型详解</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=8" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 9)">
+                    <div class="course-header">
+                        <div class="course-number">9</div>
+                        <div class="course-details">
+                            <h4>学习空间设计</h4>
+                            <p>学习空间定义、PST框架与智能学习环境</p>
+                            <div class="course-meta">
+                                <span>🕐 约2.5小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=9" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=9&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">学习空间定义与PST框架</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=9&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">学习空间设计原则</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=9&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">智能学习环境</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=9" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 10)">
+                    <div class="course-header">
+                        <div class="course-number">10</div>
+                        <div class="course-details">
+                            <h4>教育项目设计与评估</h4>
+                            <p>教育项目定义、逻辑模型与项目评估</p>
+                            <div class="course-meta">
+                                <span>🕐 约2.5小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=10" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=10&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育项目定义与生命周期</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=10&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育项目设计：逻辑模型</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=10&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育项目评估</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=10" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 11)">
+                    <div class="course-header">
+                        <div class="course-number">11</div>
+                        <div class="course-details">
+                            <h4>设计型研究</h4>
+                            <p>设计型研究概念、特征、流程与案例</p>
+                            <div class="course-meta">
+                                <span>🕐 约2小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=11" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=11&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">设计型研究概念与特征</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=11&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">设计型研究流程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=11&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">设计型研究与传统实证研究</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=11" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-item" onclick="toggleChapter(this, 12)">
+                    <div class="course-header">
+                        <div class="course-number">12</div>
+                        <div class="course-details">
+                            <h4>设计方法论</h4>
+                            <p>需求分析、用户分析、利益相关者分析与功能列表</p>
+                            <div class="course-meta">
+                                <span>🕐 约3小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=12" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=12&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">原始需求分析与目标用户分析</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=12&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">利益相关者与竞争对手分析</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=12&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">场景分析与功能列表</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=12" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第四部分：新兴议题 -->
+                <div class="course-item" onclick="toggleChapter(this, 13)">
+                    <div class="course-header">
+                        <div class="course-number">13</div>
+                        <div class="course-details">
+                            <h4>教育技术新兴议题</h4>
+                            <p>新兴技术（学习分析、人工智能、自适应学习）与挑战</p>
+                            <div class="course-meta">
+                                <span>🕐 约2小时</span>
+                                <span>📊 进度 0%</span>
+                            </div>
+                        </div>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="course-progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="chapter-dropdown">
+                        <div class="chapter-dropdown-items">
+                        <a href="video-learning.html?chapter=13" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">🎬</span><span class="item-text">观看视频课程</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=13&page=1" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">新兴技术概述</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=13&page=2" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">新兴技术相关问题</span></div>
+                        </a>
+                        <a href="text-learning.html?chapter=13&page=3" class="chapter-dropdown-item">
+                            <div class="item-content"><span class="item-icon">📝</span><span class="item-text">教育技术挑战</span></div>
+                        </a>
+                        <a href="quiz.html?chapter=13" class="chapter-dropdown-item" onclick="event.stopPropagation();">
+                            <div class="item-content"><span class="item-icon">📋</span><span class="item-text">完成章节测验</span></div>
+                        </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleChapter(element, chapterNum) {
+            const dropdown = element.querySelector('.chapter-dropdown');
+            const isExpanded = element.classList.contains('expanded');
+
+            document.querySelectorAll('.course-item').forEach(item => {
+                item.classList.remove('expanded');
+                item.querySelector('.chapter-dropdown').classList.remove('active');
+            });
+
+            if (!isExpanded) {
+                element.classList.add('expanded');
+                dropdown.classList.add('active');
+            }
+        }
+    </script>
+    <script>const floatingAIHTML=`<div id="floatingAI" style="position:fixed;bottom:20px;right:20px;z-index:9999;"><div id="floatingAIBtn" onclick="toggleFloatingAI()" style="width:56px;height:56px;background:linear-gradient(135deg,#1a365d,#2d4a6f);border-radius:50%;box-shadow:0 4px 16px rgba(26,54,93,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 20px rgba(26,54,93,0.5)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(26,54,93,0.4)';">🤖</div><div id="floatingAIPanel" style="display:none;position:absolute;bottom:70px;right:0;width:380px;height:520px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;flex-direction:column;"><div style="background:linear-gradient(135deg,#1a365d,#2d4a6f);color:white;padding:1rem;display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:.75rem;"><span style="font-size:1.5rem;">🤖</span><div><div style="font-weight:bold;">学习伙伴</div><div style="font-size:.7rem;opacity:.8;">在线</div></div></div><button onclick="toggleFloatingAI()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:.25rem;">✕</button></div><div id="floatingAIMessages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;"><div style="display:flex;gap:.75rem;align-items:flex-start;"><div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;line-height:1.5;">你好！我是学习伙伴，有什么可以帮你的吗？</div></div></div><div style="padding:.75rem;border-top:1px solid #eee;display:flex;gap:.5rem;"><input type="text" id="floatingAIInput" placeholder="输入问题..." style="flex:1;padding:.75rem;border:1px solid #ddd;border-radius:8px;font-size:.85rem;" onkeypress="if(event.key==='Enter')sendFloatingAIMessage()"><button onclick="sendFloatingAIMessage()" style="background:#1a365d;color:white;border:none;border-radius:8px;padding:.75rem 1rem;cursor:pointer;font-size:.85rem;">发送</button></div></div></div>`;document.write(floatingAIHTML);function toggleFloatingAI(){const panel=document.getElementById('floatingAIPanel');const btn=document.getElementById('floatingAIBtn');if(panel.style.display==='none'){panel.style.display='flex';btn.textContent='✕';}else{panel.style.display='none';btn.textContent='🤖';}}let floatingAIFullContent='';function sendFloatingAIMessage(){const input=document.getElementById('floatingAIInput');const message=input.value.trim();if(!message)return;const chatMessages=document.getElementById('floatingAIMessages');const userMsg=document.createElement('div');userMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;justify-content:flex-end;';userMsg.innerHTML=`<div style="background:#1a365d;color:white;padding:.75rem;border-radius:8px;border-top-right-radius:2px;max-width:80%;font-size:.85rem;">${message}</div><div style="width:32px;height:32px;background:#1a365d;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;">👤</div>`;chatMessages.appendChild(userMsg);const botMsg=document.createElement('div');botMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;';botMsg.innerHTML=`<div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;" id="floatingAIResponse"><span class="thinking-dots">正在思考<span>.</span></span></div>`;chatMessages.appendChild(botMsg);chatMessages.scrollTop=chatMessages.scrollHeight;input.value='';let thinkingInterval=setInterval(()=>{const dots=botMsg.querySelector('.thinking-dots');if(dots){const text=dots.textContent;dots.innerHTML=text.endsWith('...')?'正在思考':text+'.';}},500);const responseText=botMsg.querySelector('#floatingAIResponse');floatingAIFullContent='';fetch('http://localhost:8000/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:'student_001',message:message})}).then(response=>{if(!response.ok)throw new Error('API请求失败');const reader=response.body.getReader();const decoder=new TextDecoder();function read(){reader.read().then(({done,value})=>{if(done){clearInterval(thinkingInterval);return;}const chunk=decoder.decode(value,{stream:true});const lines=chunk.split('\n');for(const line of lines){if(line.startsWith('data:')){try{const data=JSON.parse(line.slice(5));if(data.content){clearInterval(thinkingInterval);floatingAIFullContent+=data.content;responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}<span class="cursor">|</span></div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.done){responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}</div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.error){clearInterval(thinkingInterval);responseText.innerHTML=`抱歉出现问题: ${data.error}`;}}catch(e){}}}if(!done)read();});}read();}).catch(error=>{clearInterval(thinkingInterval);responseText.innerHTML=`连接失败: ${error.message}`;});}</script>
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能体中心 - 国家开放大学教育技术学课程</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教育技术学</h1>
+                    <p>欢迎，张同学</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">主导航</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a href="course.html" class="nav-item">
+                    <span class="icon">📖</span>
+                    <span>课程</span>
+                </a>
+                <a href="community.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>社群</span>
+                </a>
+                <a href="ai-center.html" class="nav-item active">
+                    <span class="icon">🤖</span>
+                    <span>智能体中心</span>
+                </a>
+                <a href="report.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学习报告</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>智能体中心</h1>
+                <p>AI智能学习伙伴，随时为您提供学习支持</p>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">🤖 可用智能体</h2>
+                <div class="ai-agents">
+                    <div class="agent-card developed">
+                        <div class="agent-avatar">📚</div>
+                        <h3>学习伙伴</h3>
+                        <p>您的个人AI学习助手，可以解答问题、辅导功课、讨论知识点</p>
+                        <span class="agent-status online">已上线</span>
+                        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="openChatbot()">
+                            开始对话
+                        </button>
+                    </div>
+
+                    <div class="agent-card developed">
+                        <div class="agent-avatar">👨‍🏫</div>
+                        <h3>助教</h3>
+                        <p>课程助教智能体，提供课程答疑和作业指导服务</p>
+                        <span class="agent-status online">已上线</span>
+                        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="openAssistantChat()">
+                            开始对话
+                        </button>
+                    </div>
+
+                    <div class="agent-card developed">
+                        <div class="agent-avatar">🎓</div>
+                        <h3>老师</h3>
+                        <p>专业教师智能体，提供深度学术指导和个性化建议</p>
+                        <span class="agent-status online">已上线</span>
+                        <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" onclick="openTeacherChat()">
+                            开始对话
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">📖 学习伙伴功能介绍</h2>
+                <div class="card-grid">
+                    <div class="situation-card" style="cursor: default;">
+                        <h3>💬 知识问答</h3>
+                        <p>可以随时提问课程相关问题，获得即时解答</p>
+                    </div>
+                    <div class="situation-card" style="cursor: default;">
+                        <h3>📝 笔记辅导</h3>
+                        <p>帮助整理和归纳学习笔记，构建知识体系</p>
+                    </div>
+                    <div class="situation-card" style="cursor: default;">
+                        <h3>🎯 练习推荐</h3>
+                        <p>根据学习进度推荐合适的练习题目</p>
+                    </div>
+                    <div class="situation-card" style="cursor: default;">
+                        <h3>🔄 学习总结</h3>
+                        <p>帮助梳理章节要点，生成学习摘要</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="chatbotContainer" style="display: none;">
+                <h2 class="card-title">💬 与学习伙伴对话</h2>
+                <div style="background: var(--hover-bg); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; min-height: 300px;">
+                    <div id="chatMessages" style="max-height: 300px; overflow-y: auto;">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 32px; height: 32px; background: var(--success-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">📚</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">学习伙伴</div>
+                                <div style="background: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem;">
+                                    你好！我是你的AI学习伙伴。有什么学习上的问题可以随时问我哦！
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" id="chatInput" placeholder="输入您的问题..." style="flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;" onkeypress="handleChatKeypress(event)">
+                    <button class="btn btn-primary" onclick="sendMessage()">发送</button>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-light);">
+                    💡 提示：学习伙伴基于Coze智能体平台开发，可以回答课程相关问题
+                </p>
+            </div>
+
+            <div class="card" id="assistantContainer" style="display: none;">
+                <h2 class="card-title">👨‍🏫 与助教对话</h2>
+                <div style="background: var(--hover-bg); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; min-height: 300px;">
+                    <div id="assistantMessages" style="max-height: 300px; overflow-y: auto;">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 32px; height: 32px; background: #dd6b20; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👨‍🏫</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">助教</div>
+                                <div style="background: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem;">
+                                    你好！我是课程助教，有什么关于课程内容或作业的问题可以问我！
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" id="assistantInput" placeholder="输入您的问题..." style="flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;" onkeypress="handleAssistantKeypress(event)">
+                    <button class="btn btn-primary" onclick="sendAssistantMessage()">发送</button>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-light);">
+                    💡 提示：助教基于Coze智能体平台开发，专注于课程答疑和作业指导
+                </p>
+            </div>
+
+            <div class="card" id="teacherContainer" style="display: none;">
+                <h2 class="card-title">🎓 与老师对话</h2>
+                <div style="background: var(--hover-bg); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; min-height: 300px;">
+                    <div id="teacherMessages" style="max-height: 300px; overflow-y: auto;">
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 32px; height: 32px; background: #805ad5; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🎓</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">老师</div>
+                                <div style="background: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem;">
+                                    你好！我是你的专属老师，在学术和生活上都可以为你提供指导。
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" id="teacherInput" placeholder="输入您的问题..." style="flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;" onkeypress="handleTeacherKeypress(event)">
+                    <button class="btn btn-primary" onclick="sendTeacherMessage()">发送</button>
+                </div>
+                <p style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-light);">
+                    💡 提示：老师基于Coze智能体平台开发，提供深度学术指导
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let chatbotOpen = false;
+        let assistantChatOpen = false;
+
+        function openChatbot() {
+            const container = document.getElementById('chatbotContainer');
+            const assistantContainer = document.getElementById('assistantContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                chatbotOpen = true;
+            }
+            if (assistantContainer.style.display === 'block') {
+                assistantContainer.style.display = 'none';
+                assistantChatOpen = false;
+            }
+            document.getElementById('chatInput').focus();
+        }
+
+        function openAssistantChat() {
+            const container = document.getElementById('assistantContainer');
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                assistantChatOpen = true;
+            }
+            if (chatbotContainer.style.display === 'block') {
+                chatbotContainer.style.display = 'none';
+                chatbotOpen = false;
+            }
+            document.getElementById('assistantInput').focus();
+        }
+
+        function handleChatKeypress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function handleAssistantKeypress(event) {
+            if (event.key === 'Enter') {
+                sendAssistantMessage();
+            }
+        }
+
+        function handleTeacherKeypress(event) {
+            if (event.key === 'Enter') {
+                sendTeacherMessage();
+            }
+        }
+
+        function openTeacherChat() {
+            const container = document.getElementById('teacherContainer');
+            const chatbotContainer = document.getElementById('chatbotContainer');
+            const assistantContainer = document.getElementById('assistantContainer');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+            }
+            if (chatbotContainer.style.display === 'block') {
+                chatbotContainer.style.display = 'none';
+            }
+            if (assistantContainer.style.display === 'block') {
+                assistantContainer.style.display = 'none';
+            }
+            document.getElementById('teacherInput').focus();
+        }
+
+        function sendTeacherMessage() {
+            const input = document.getElementById('teacherInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('teacherMessages');
+
+            const userMsg = document.createElement('div');
+            userMsg.style.display = 'flex';
+            userMsg.style.gap = '1rem';
+            userMsg.style.marginBottom = '1rem';
+            userMsg.style.flexDirection = 'row-reverse';
+            userMsg.innerHTML = `
+                <div style="width: 32px; height: 32px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
+                <div style="flex: 1; text-align: right;">
+                    <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">你</div>
+                    <div style="background: var(--secondary-color); color: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem; display: inline-block;">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(userMsg);
+
+            input.value = '';
+
+            const botMsg = document.createElement('div');
+            botMsg.style.display = 'flex';
+            botMsg.style.gap = '1rem';
+            botMsg.style.marginBottom = '1rem';
+            botMsg.innerHTML = `
+                <div style="width: 32px; height: 32px; background: #805ad5; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">🎓</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">老师</div>
+                    <div style="background: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem;" id="teacherResponse">
+                        <span class="thinking-dots">正在思考<span>.</span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(botMsg);
+            botMsg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+            let thinkingInterval = setInterval(() => {
+                const dots = botMsg.querySelector('.thinking-dots');
+                if (dots) {
+                    const text = dots.textContent;
+                    if (text.endsWith('...')) {
+                        dots.innerHTML = '正在思考';
+                    } else {
+                        dots.innerHTML = text + '.';
+                    }
+                }
+            }, 500);
+
+            const responseText = botMsg.querySelector('#teacherResponse');
+            let fullContent = '';
+
+            fetch(`http://localhost:8000/api/chat/teacher/stream`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: 'student_001', message: message })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('API请求失败');
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            clearInterval(thinkingInterval);
+                            return;
+                        }
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data:')) {
+                                try {
+                                    const data = JSON.parse(line.slice(5));
+                                    if (data.content) {
+                                        clearInterval(thinkingInterval);
+                                        fullContent += data.content;
+                                        responseText.innerHTML = `<div style="white-space: pre-wrap;">${fullContent}<span class="cursor">|</span></div>`;
+                                        botMsg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                                    }
+                                    if (data.done) {
+                                        responseText.innerHTML = `<div style="white-space: pre-wrap;">${fullContent}</div>`;
+                                        botMsg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                                    }
+                                    if (data.error) {
+                                        clearInterval(thinkingInterval);
+                                        responseText.innerHTML = `<div style="white-space: pre-wrap;">抱歉，智能体服务暂时无法使用。<br>错误: ${data.error}</div>`;
+                                        botMsg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                                    }
+                                } catch (e) {
+                                    console.log('解析流数据失败:', e);
+                                }
+                            }
+                        }
+                        if (!done) read();
+                    });
+                }
+                read();
+            })
+            .catch(error => {
+                clearInterval(thinkingInterval);
+                responseText.innerHTML = `<div style="white-space: pre-wrap;">抱歉，连接出现问题。<br><span style="font-size: 0.8rem; color: var(--text-light);">错误: ${error.message}</span></div>`;
+                botMsg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            });
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+
+            const userMsg = document.createElement('div');
+            userMsg.style.display = 'flex';
+            userMsg.style.gap = '1rem';
+            userMsg.style.marginBottom = '1rem';
+            userMsg.style.flexDirection = 'row-reverse';
+            userMsg.innerHTML = `
+                <div style="width: 32px; height: 32px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
+                <div style="flex: 1; text-align: right;">
+                    <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">你</div>
+                    <div style="background: var(--secondary-color); color: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem; display: inline-block;">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(userMsg);
+
+            input.value = '';
+
+            const botMsg = document.createElement('div');
+            botMsg.style.display = 'flex';
+            botMsg.style.gap = '1rem';
+            botMsg.style.marginBottom = '1rem';
+            botMsg.innerHTML = `
+                <div style="width: 32px; height: 32px; background: var(--success-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">📚</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">学习伙伴</div>
+                    <div style="background: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem;" id="botResponse">
+                        <span class="thinking-dots">正在思考<span>.</span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(botMsg);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            let thinkingInterval = setInterval(() => {
+                const dots = botMsg.querySelector('.thinking-dots');
+                if (dots) {
+                    const text = dots.textContent;
+                    if (text.endsWith('...')) {
+                        dots.innerHTML = '正在思考';
+                    } else {
+                        dots.innerHTML = text + '.';
+                    }
+                }
+            }, 500);
+
+            const responseText = botMsg.querySelector('#botResponse');
+            let fullContent = '';
+
+            fetch(`http://localhost:8000/api/chat/stream`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: 'student_001',
+                    message: message
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('API请求失败');
+                }
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            clearInterval(thinkingInterval);
+                            return;
+                        }
+
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+
+                        for (const line of lines) {
+                            if (line.startsWith('data:')) {
+                                try {
+                                    const data = JSON.parse(line.slice(5));
+                                    if (data.content) {
+                                        clearInterval(thinkingInterval);
+                                        fullContent += data.content;
+                                        responseText.innerHTML = `<div style="white-space: pre-wrap;">${fullContent}<span class="cursor">|</span></div>`;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    }
+                                    if (data.done) {
+                                        responseText.innerHTML = `<div style="white-space: pre-wrap;">${fullContent}</div>`;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    }
+                                    if (data.error) {
+                                        clearInterval(thinkingInterval);
+                                        responseText.innerHTML = `抱歉，智能体服务暂时无法使用。<br><br>错误信息: ${data.error}`;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    }
+                                } catch (e) {
+                                    console.log('解析流数据失败:', e);
+                                }
+                            }
+                        }
+
+                        if (!done) {
+                            read();
+                        }
+                    });
+                }
+
+                read();
+            })
+            .catch(error => {
+                clearInterval(thinkingInterval);
+                responseText.innerHTML = `
+                    抱歉，连接出现问题。<br>
+                    <span style="font-size: 0.8rem; color: var(--text-light);">错误: ${error.message}</span>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        function sendAssistantMessage() {
+            const input = document.getElementById('assistantInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+
+            const chatMessages = document.getElementById('assistantMessages');
+
+            const userMsg = document.createElement('div');
+            userMsg.style.display = 'flex';
+            userMsg.style.gap = '1rem';
+            userMsg.style.marginBottom = '1rem';
+            userMsg.style.flexDirection = 'row-reverse';
+            userMsg.innerHTML = `
+                <div style="width: 32px; height: 32px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
+                <div style="flex: 1; text-align: right;">
+                    <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">你</div>
+                    <div style="background: var(--secondary-color); color: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem; display: inline-block;">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(userMsg);
+
+            input.value = '';
+
+            const botMsg = document.createElement('div');
+            botMsg.style.display = 'flex';
+            botMsg.style.gap = '1rem';
+            botMsg.style.marginBottom = '1rem';
+            botMsg.innerHTML = `
+                <div style="width: 32px; height: 32px; background: #dd6b20; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">👨‍🏫</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: bold; font-size: 0.85rem; color: var(--text-color);">助教</div>
+                    <div style="background: white; padding: 0.75rem; border-radius: 8px; margin-top: 0.25rem; font-size: 0.85rem;" id="assistantResponse">
+                        <span class="thinking-dots">正在思考<span>.</span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(botMsg);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            let thinkingInterval = setInterval(() => {
+                const dots = botMsg.querySelector('.thinking-dots');
+                if (dots) {
+                    const text = dots.textContent;
+                    if (text.endsWith('...')) {
+                        dots.innerHTML = '正在思考';
+                    } else {
+                        dots.innerHTML = text + '.';
+                    }
+                }
+            }, 500);
+
+            const responseText = botMsg.querySelector('#assistantResponse');
+            let fullContent = '';
+
+            fetch(`http://localhost:8000/api/chat/assistant/stream`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: 'student_001',
+                    message: message
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('API请求失败');
+                }
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            clearInterval(thinkingInterval);
+                            return;
+                        }
+
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+
+                        for (const line of lines) {
+                            if (line.startsWith('data:')) {
+                                try {
+                                    const data = JSON.parse(line.slice(5));
+                                    if (data.content) {
+                                        clearInterval(thinkingInterval);
+                                        fullContent += data.content;
+                                        responseText.innerHTML = `<div style="white-space: pre-wrap;">${fullContent}<span class="cursor">|</span></div>`;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    }
+                                    if (data.done) {
+                                        responseText.innerHTML = `<div style="white-space: pre-wrap;">${fullContent}</div>`;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    }
+                                    if (data.error) {
+                                        clearInterval(thinkingInterval);
+                                        responseText.innerHTML = `抱歉，智能体服务暂时无法使用。<br><br>错误信息: ${data.error}`;
+                                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                                    }
+                                } catch (e) {
+                                    console.log('解析流数据失败:', e);
+                                }
+                            }
+                        }
+
+                        if (!done) {
+                            read();
+                        }
+                    });
+                }
+
+                read();
+            })
+            .catch(error => {
+                clearInterval(thinkingInterval);
+                responseText.innerHTML = `
+                    抱歉，连接出现问题。<br>
+                    <span style="font-size: 0.8rem; color: var(--text-light);">错误: ${error.message}</span>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .cursor {
+                animation: blink 1s infinite;
+            }
+            @keyframes blink {
+                0%, 50% { opacity: 1; }
+                51%, 100% { opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    <script>const floatingAIHTML=`<div id="floatingAI" style="position:fixed;bottom:20px;right:20px;z-index:9999;"><div id="floatingAIBtn" onclick="toggleFloatingAI()" style="width:56px;height:56px;background:linear-gradient(135deg,#1a365d,#2d4a6f);border-radius:50%;box-shadow:0 4px 16px rgba(26,54,93,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 20px rgba(26,54,93,0.5)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(26,54,93,0.4)';">🤖</div><div id="floatingAIPanel" style="display:none;position:absolute;bottom:70px;right:0;width:380px;height:520px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;flex-direction:column;"><div style="background:linear-gradient(135deg,#1a365d,#2d4a6f);color:white;padding:1rem;display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:.75rem;"><span style="font-size:1.5rem;">🤖</span><div><div style="font-weight:bold;">学习伙伴</div><div style="font-size:.7rem;opacity:.8;">在线</div></div></div><button onclick="toggleFloatingAI()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:.25rem;">✕</button></div><div id="floatingAIMessages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;"><div style="display:flex;gap:.75rem;align-items:flex-start;"><div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;line-height:1.5;">你好！我是学习伙伴，有什么可以帮你的吗？</div></div></div><div style="padding:.75rem;border-top:1px solid #eee;display:flex;gap:.5rem;"><input type="text" id="floatingAIInput" placeholder="输入问题..." style="flex:1;padding:.75rem;border:1px solid #ddd;border-radius:8px;font-size:.85rem;" onkeypress="if(event.key==='Enter')sendFloatingAIMessage()"><button onclick="sendFloatingAIMessage()" style="background:#1a365d;color:white;border:none;border-radius:8px;padding:.75rem 1rem;cursor:pointer;font-size:.85rem;">发送</button></div></div></div>`;document.write(floatingAIHTML);function toggleFloatingAI(){const panel=document.getElementById('floatingAIPanel');const btn=document.getElementById('floatingAIBtn');if(panel.style.display==='none'){panel.style.display='flex';btn.textContent='✕';}else{panel.style.display='none';btn.textContent='🤖';}}let floatingAIFullContent='';function sendFloatingAIMessage(){const input=document.getElementById('floatingAIInput');const message=input.value.trim();if(!message)return;const chatMessages=document.getElementById('floatingAIMessages');const userMsg=document.createElement('div');userMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;justify-content:flex-end;';userMsg.innerHTML=`<div style="background:#1a365d;color:white;padding:.75rem;border-radius:8px;border-top-right-radius:2px;max-width:80%;font-size:.85rem;">${message}</div><div style="width:32px;height:32px;background:#1a365d;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;">👤</div>`;chatMessages.appendChild(userMsg);const botMsg=document.createElement('div');botMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;';botMsg.innerHTML=`<div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;" id="floatingAIResponse"><span class="thinking-dots">正在思考<span>.</span></span></div>`;chatMessages.appendChild(botMsg);chatMessages.scrollTop=chatMessages.scrollHeight;input.value='';let thinkingInterval=setInterval(()=>{const dots=botMsg.querySelector('.thinking-dots');if(dots){const text=dots.textContent;dots.innerHTML=text.endsWith('...')?'正在思考':text+'.';}},500);const responseText=botMsg.querySelector('#floatingAIResponse');floatingAIFullContent='';fetch('http://localhost:8000/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:'student_001',message:message})}).then(response=>{if(!response.ok)throw new Error('API请求失败');const reader=response.body.getReader();const decoder=new TextDecoder();function read(){reader.read().then(({done,value})=>{if(done){clearInterval(thinkingInterval);return;}const chunk=decoder.decode(value,{stream:true});const lines=chunk.split('\n');for(const line of lines){if(line.startsWith('data:')){try{const data=JSON.parse(line.slice(5));if(data.content){clearInterval(thinkingInterval);floatingAIFullContent+=data.content;responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}<span class="cursor">|</span></div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.done){responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}</div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.error){clearInterval(thinkingInterval);responseText.innerHTML=`抱歉出现问题: ${data.error}`;}}catch(e){}}}if(!done)read();});}read();}).catch(error=>{clearInterval(thinkingInterval);responseText.innerHTML=`连接失败: ${error.message}`;});}</script>
+</body>
+</html>

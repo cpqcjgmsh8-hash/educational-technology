@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频学习 - 教育技术学概述</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .video-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .back-btn { position: fixed; top: 1rem; left: 280px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; padding: 0.5rem 1rem; background: var(--hover-bg); border-radius: 8px; transition: all 0.2s; z-index: 100; }
+        .back-btn:hover { background: var(--secondary-color); color: white; }
+        .chapter-badge {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .video-main {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            position: relative;
+        }
+        .video-placeholder {
+            text-align: center;
+            color: white;
+        }
+        .video-placeholder-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .video-placeholder-icon:hover {
+            transform: scale(1.1);
+        }
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 1rem;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary-color);
+            border-radius: 3px;
+            width: 0%;
+        }
+        .progress-handle {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            cursor: grab;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .progress-bar:hover .progress-handle {
+            opacity: 1;
+        }
+        .progress-handle:active {
+            cursor: grabbing;
+        }
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+            font-size: 0.85rem;
+        }
+        .controls-left, .controls-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+            transition: opacity 0.2s;
+        }
+        .control-btn:hover {
+            opacity: 0.7;
+        }
+        .video-info {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 1.5rem;
+        }
+        .video-details {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .video-details h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .video-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--hover-bg);
+        }
+        .video-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .video-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: var(--hover-bg);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .video-tab.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chapter-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chapter-item:hover {
+            background: var(--hover-bg);
+        }
+        .chapter-item.current {
+            background: rgba(26,54,93,0.1);
+            border-left: 3px solid var(--secondary-color);
+        }
+        .chapter-num {
+            width: 28px;
+            height: 28px;
+            background: var(--hover-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .chapter-item.current .chapter-num {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .chapter-info {
+            flex: 1;
+        }
+        .chapter-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        .chapter-duration {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        .video-sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .sidebar-title {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        .notes-list {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .note-item {
+            padding: 0.75rem;
+            background: var(--hover-bg);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .note-item:hover {
+            background: rgba(26,54,93,0.1);
+        }
+        .note-time {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.25rem;
+        }
+        .add-note {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .add-note input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid var(--hover-bg);
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .add-note button {
+            padding: 0.5rem 1rem;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .bottom-nav {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+            margin-top: 1.5rem;
+            border-top: 1px solid var(--hover-bg);
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--hover-bg);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .discussion-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .discussion-title {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--hover-bg);
+        }
+        .discussion-item {
+            padding: 1rem;
+            background: var(--hover-bg);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        .discussion-item .author {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .discussion-item .content {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-top: 0.25rem;
+        }
+        .post-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .post-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教育技术学</h1>
+                    <p>课程学习</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">主导航</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a href="course.html" class="nav-item active">
+                    <span class="icon">📖</span>
+                    <span>课程</span>
+                </a>
+                <a href="community.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>社群</span>
+                </a>
+                <a href="ai-center.html" class="nav-item">
+                    <span class="icon">🤖</span>
+                    <span>智能体中心</span>
+                </a>
+                <a href="report.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学习报告</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content" style="margin-left: 260px;">
+            <a href="course.html" class="back-btn">← 返回课程</a>
+            <div class="video-page">
+                <span class="chapter-badge" id="chapterBadge">第1章 · 视频学习</span>
+
+                <div class="video-main">
+                    <div class="video-player" id="videoPlayer">
+                        <video id="actualVideo" style="width:100%;height:100%;object-fit:contain;display:none;" controls>
+                            您的浏览器不支持视频播放
+                        </video>
+                        <div class="video-placeholder" id="videoPlaceholder" onclick="startVideo()">
+                            <div class="video-placeholder-icon">▶️</div>
+                            <p style="font-size: 1.1rem;">点击播放视频课程</p>
+                            <p style="font-size: 0.85rem; opacity: 0.7;" id="videoSubtitle">教育技术学概述 - 第1章</p>
+                        </div>
+                    </div>
+                    <div class="video-controls" id="videoControls" style="display:none;">
+                        <div class="progress-bar" id="progressBar" onmousedown="startSeek(event)">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <div class="progress-handle" id="progressHandle"></div>
+                        </div>
+                        <div class="controls-row">
+                            <div class="controls-left">
+                                <button class="control-btn" id="playBtn" onclick="togglePlay()">▶️</button>
+                                <span id="timeDisplay">00:00 / 00:00</span>
+                            </div>
+                            <div class="controls-right">
+                                <button class="control-btn" onclick="toggleMute()">🔊</button>
+                                <button class="control-btn" onclick="toggleFullscreen()">⛶</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-info">
+                    <div class="video-details">
+                        <h1 id="videoTitle">教育技术学概述 - 视频课程</h1>
+                        <div class="video-meta">
+                            <span>👨‍🏫 张老师</span>
+                            <span>📅 2026-03-01</span>
+                            <span>👁️ <span id="viewCount">1,234</span> 次观看</span>
+                        </div>
+
+                        <div class="video-tabs">
+                            <button class="video-tab active" onclick="switchVideoTab(this, 'chapters')">课程章节</button>
+                            <button class="video-tab" onclick="switchVideoTab(this, 'desc')">课程介绍</button>
+                        </div>
+
+                        <div id="chapters" class="tab-content active">
+                            <div class="chapter-list" id="chapterList"></div>
+                        </div>
+
+                        <div id="desc" class="tab-content">
+                            <div style="line-height: 1.8; font-size: 0.9rem; color: var(--text-color);" id="chapterDesc"></div>
+                        </div>
+                    </div>
+
+                    <div class="video-sidebar">
+                        <h3 class="sidebar-title">📝 视频笔记</h3>
+                        <div class="notes-list" id="notesList">
+                            <div class="note-item">
+                                <div class="note-time">02:15</div>
+                                <div>教育技术的核心是优化教学过程</div>
+                            </div>
+                            <div class="note-item">
+                                <div class="note-time">04:32</div>
+                                <div>AECT2012定义新增"道德实践"</div>
+                            </div>
+                        </div>
+                        <div class="add-note">
+                            <input type="text" id="noteInput" placeholder="添加笔记... (输入时间点如 05:30)">
+                            <button onclick="addNote()">添加</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-nav">
+                    <a href="#" id="nextTextBtn" class="nav-btn">继续学习文字内容 →</a>
+                </div>
+
+                <div class="discussion-section">
+                    <h3 class="discussion-title">💬 视频讨论区</h3>
+                    <div class="discussion-item">
+                        <div class="author">李明辉</div>
+                        <div class="content">这个视频讲解很清晰，尤其是关于ADDIE模型的部分。建议大家先看视频再看书，效率更高。</div>
+                    </div>
+                    <div class="discussion-item">
+                        <div class="author">王晓芳</div>
+                        <div class="content">我通常用1.5倍速看视频，节省时间。不过重要的部分会放慢反复看。</div>
+                    </div>
+                    <div class="post-input-container">
+                        <textarea class="post-input" id="videoCommentInput" placeholder="分享你的观看心得..." rows="2"></textarea>
+                        <button class="btn btn-primary" onclick="postVideoComment()">发言</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        // 章节数据
+        const chapterVideoData = {
+            1: { title: "教育技术学导论", video: "../resource/viedo/第1章视频.mp4", duration: "18:32" },
+            2: { title: "技术背景下的学习", video: "../resource/viedo/第2章视频.mp4", duration: "22:15" },
+            3: { title: "学习目标、教学法与技术的关联", video: "../resource/viedo/第3章视频.mp4", duration: "19:48" },
+            4: { title: "教育技术的系统视角", video: "../resource/viedo/第4章视频.mp4", duration: "21:30" },
+            5: { title: "教育技术的用户视角", video: "../resource/viedo/第5章视频.mp4", duration: "20:45" },
+            6: { title: "学习者体验", video: "../resource/viedo/第6章视频.mp4", duration: "23:10" },
+            7: { title: "教育技术的社会学习视角", video: "../resource/viedo/第7章视频.mp4", duration: "19:25" },
+            8: { title: "学习活动与教学系统设计", video: "../resource/viedo/第8章视频.mp4", duration: "24:00" },
+            9: { title: "学习空间设计", video: "../resource/viedo/第9章视频.mp4", duration: "18:55" },
+            10: { title: "教育项目设计与评估", video: "../resource/viedo/第10章视频.mp4", duration: "21:20" },
+            11: { title: "设计型研究", video: "../resource/viedo/第11章视频.mp4", duration: "20:30" },
+            12: { title: "设计方法论", video: "../resource/viedo/第12章视频.mp4", duration: "22:45" },
+            13: { title: "教育技术的新兴问题", video: "../resource/viedo/第13章视频.mp4", duration: "25:15" }
+        };
+
+        // 从URL获取章节参数
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentChapter = parseInt(urlParams.get('chapter')) || 1;
+        const videoData = chapterVideoData[currentChapter] || chapterVideoData[1];
+
+        const video = document.getElementById('actualVideo');
+        const placeholder = document.getElementById('videoPlaceholder');
+
+        // 更新页面内容
+        document.getElementById('chapterBadge').textContent = `第${currentChapter}章 · 视频学习`;
+        document.getElementById('videoTitle').textContent = `${videoData.title} - 视频课程`;
+        document.getElementById('videoSubtitle').textContent = `${videoData.title} - 第${currentChapter}章`;
+        document.getElementById('nextTextBtn').href = `text-learning.html?chapter=${currentChapter}&page=1`;
+
+        // 章节描述
+        const chapterDescs = {
+            1: "<p>本视频介绍教育技术学的基本概念、发展历史和研究范畴。</p><p><strong>学习目标：</strong></p><p>1. 理解教育技术的定义与内涵</p><p>2. 了解AECT定义的发展变化</p><p>3. 掌握教育技术发展的五个阶段</p>",
+            2: "<p>本视频探讨技术背景下各种学习理论的应用与发展。</p><p><strong>学习目标：</strong></p><p>1. 理解行为主义、认知主义学习理论</p><p>2. 掌握建构主义学习理论核心概念</p><p>3. 了解混合学习模式的应用</p>",
+            3: "<p>本视频讲解学习目标、教学方法与技术的关联。</p><p><strong>学习目标：</strong></p><p>1. 掌握布鲁姆教育目标分类学</p><p>2. 理解ADDIE模型的应用</p><p>3. 学会编写教学目标</p>",
+            4: "<p>本视频从系统视角分析教育技术的理论与实践。</p><p><strong>学习目标：</strong></p><p>1. 理解系统方法的核心思想</p><p>2. 掌握IPO模型的应用</p><p>3. 学会运用系统思维分析问题</p>",
+            5: "<p>本视频从用户视角探讨教育技术的开发与应用。</p><p><strong>学习目标：</strong></p><p>1. 理解ARCS动机模型</p><p>2. 掌握用户体验设计原则</p><p>3. 学会以用户为中心的设计方法</p>",
+            6: "<p>本视频探讨如何提升学习者的学习体验。</p><p><strong>学习目标：</strong></p><p>1. 理解学习者体验的核心要素</p><p>2. 掌握沉浸式学习环境设计</p><p>3. 了解自适应学习系统原理</p>",
+            7: "<p>本视频从社会学习视角探讨协作与社区学习。</p><p><strong>学习目标：</strong></p><p>1. 理解班杜拉社会学习理论</p><p>2. 掌握协作学习的设计方法</p><p>3. 了解CSCL的应用</p>",
+            8: "<p>本视频讲解学习活动的设计与教学系统设计。</p><p><strong>学习目标：</strong></p><p>1. 掌握布鲁姆分类学的应用</p><p>2. 理解认知负荷理论</p><p>3. 学会ADDIE模型实践</p>",
+            9: "<p>本视频探讨物理与虚拟学习空间的设计。</p><p><strong>学习目标：</strong></p><p>1. 理解PST框架的应用</p><p>2. 掌握智能学习环境特点</p><p>3. 学会学习空间设计原则</p>",
+            10: "<p>本视频讲解教育项目的规划与评估方法。</p><p><strong>学习目标：</strong></p><p>1. 理解逻辑模型的应用</p><p>2. 掌握柯克帕特里克评估模型</p><p>3. 学会项目可行性分析方法</p>",
+            11: "<p>本视频介绍设计型研究的理论与方法。</p><p><strong>学习目标：</strong></p><p>1. 理解设计型研究的核心特征</p><p>2. 掌握设计型研究的基本流程</p><p>3. 了解设计原则的特点</p>",
+            12: "<p>本视频讲解教育技术的设计方法论。</p><p><strong>学习目标：</strong></p><p>1. 掌握需求分析方法</p><p>2. 学会用户研究方法</p><p>3. 理解设计思维的应用</p>",
+            13: "<p>本视频探讨教育技术领域的新兴问题与发展趋势。</p><p><strong>学习目标：</strong></p><p>1. 了解AI在教育中的应用</p><p>2. 理解学习分析技术</p><p>3. 掌握教育技术伦理原则</p>"
+        };
+        document.getElementById('chapterDesc').innerHTML = chapterDescs[currentChapter];
+
+        // 生成章节列表
+        let chapterListHtml = '';
+        for (let i = 1; i <= 13; i++) {
+            const isCurrent = i === currentChapter;
+            chapterListHtml += `
+                <div class="chapter-item ${isCurrent ? 'current' : ''}" onclick="jumpToChapter(${i})">
+                    <div class="chapter-num">${i}</div>
+                    <div class="chapter-info">
+                        <div class="chapter-title">${chapterVideoData[i].title}</div>
+                        <div class="chapter-duration">${isCurrent ? chapterVideoData[i].duration + ' · 播放中' : chapterVideoData[i].duration}</div>
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('chapterList').innerHTML = chapterListHtml;
+
+        function jumpToChapter(chapter) {
+            window.location.href = `video-learning.html?chapter=${chapter}`;
+        }
+
+        function startVideo() {
+            video.src = videoData.video;
+            placeholder.style.display = 'none';
+            video.style.display = 'block';
+            document.getElementById('videoControls').style.display = 'block';
+            video.play();
+            document.getElementById('playBtn').textContent = '⏸️';
+
+            // 更新观看次数
+            let views = parseInt(document.getElementById('viewCount').textContent.replace(/,/g, ''));
+            views++;
+            document.getElementById('viewCount').textContent = views.toLocaleString();
+        }
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                document.getElementById('playBtn').textContent = '⏸️';
+            } else {
+                video.pause();
+                document.getElementById('playBtn').textContent = '▶️';
+            }
+        }
+
+        function toggleMute() {
+            video.muted = !video.muted;
+        }
+
+        function toggleFullscreen() {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            }
+        }
+
+        let isDragging = false;
+
+        function seekVideo(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const percent = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            video.currentTime = percent * video.duration;
+        }
+
+        function startSeek(e) {
+            isDragging = true;
+            seekVideo(e);
+        }
+
+        document.addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                const progressBar = document.getElementById('progressBar');
+                seekVideo({ currentTarget: progressBar, clientX: e.clientX });
+            }
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+        });
+
+        video.addEventListener('timeupdate', function() {
+            if (!isDragging) {
+                const percent = (video.currentTime / video.duration) * 100;
+                document.getElementById('progressFill').style.width = percent + '%';
+                document.getElementById('progressHandle').style.left = percent + '%';
+            }
+
+            const current = formatTime(video.currentTime);
+            const total = formatTime(video.duration);
+            document.getElementById('timeDisplay').textContent = `${current} / ${total}`;
+        });
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function postVideoComment() {
+            const input = document.getElementById('videoCommentInput');
+            if (!input.value.trim()) return;
+            const discussionSection = document.querySelector('.discussion-section');
+            const newComment = document.createElement('div');
+            newComment.className = 'discussion-item';
+            newComment.innerHTML = '<div class="author">张同学（你）</div><div class="content">' + input.value + '</div>';
+            discussionSection.insertBefore(newComment, discussionSection.querySelector('.post-input-container'));
+            input.value = '';
+        }
+
+        function switchVideoTab(btn, tabId) {
+            document.querySelectorAll('.video-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function addNote() {
+            const input = document.getElementById('noteInput');
+            if (!input.value.trim()) return;
+
+            const notesList = document.getElementById('notesList');
+            const noteItem = document.createElement('div');
+            noteItem.className = 'note-item';
+            noteItem.innerHTML = '<div class="note-time">' + (input.value.match(/\d+:\d+/)?.[0] || formatTime(video.currentTime)) + '</div><div>' + input.value + '</div>';
+            notesList.insertBefore(noteItem, notesList.firstChild);
+            input.value = '';
+        }
+    </script>
+    <script>const floatingAIHTML=`<div id="floatingAI" style="position:fixed;bottom:20px;right:20px;z-index:9999;"><div id="floatingAIBtn" onclick="toggleFloatingAI()" style="width:56px;height:56px;background:linear-gradient(135deg,#1a365d,#2d4a6f);border-radius:50%;box-shadow:0 4px 16px rgba(26,54,93,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 20px rgba(26,54,93,0.5)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(26,54,93,0.4)';">🤖</div><div id="floatingAIPanel" style="display:none;position:absolute;bottom:70px;right:0;width:380px;height:520px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;flex-direction:column;"><div style="background:linear-gradient(135deg,#1a365d,#2d4a6f);color:white;padding:1rem;display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:.75rem;"><span style="font-size:1.5rem;">🤖</span><div><div style="font-weight:bold;">学习伙伴</div><div style="font-size:.7rem;opacity:.8;">在线</div></div></div><button onclick="toggleFloatingAI()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:.25rem;">✕</button></div><div id="floatingAIMessages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;"><div style="display:flex;gap:.75rem;align-items:flex-start;"><div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;line-height:1.5;">你好！我是学习伙伴，有什么可以帮你的吗？</div></div></div><div style="padding:.75rem;border-top:1px solid #eee;display:flex;gap:.5rem;"><input type="text" id="floatingAIInput" placeholder="输入问题..." style="flex:1;padding:.75rem;border:1px solid #ddd;border-radius:8px;font-size:.85rem;" onkeypress="if(event.key==='Enter')sendFloatingAIMessage()"><button onclick="sendFloatingAIMessage()" style="background:#1a365d;color:white;border:none;border-radius:8px;padding:.75rem 1rem;cursor:pointer;font-size:.85rem;">发送</button></div></div></div>`;document.write(floatingAIHTML);function toggleFloatingAI(){const panel=document.getElementById('floatingAIPanel');const btn=document.getElementById('floatingAIBtn');if(panel.style.display==='none'){panel.style.display='flex';btn.textContent='✕';}else{panel.style.display='none';btn.textContent='🤖';}}let floatingAIFullContent='';function sendFloatingAIMessage(){const input=document.getElementById('floatingAIInput');const message=input.value.trim();if(!message)return;const chatMessages=document.getElementById('floatingAIMessages');const userMsg=document.createElement('div');userMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;justify-content:flex-end;';userMsg.innerHTML=`<div style="background:#1a365d;color:white;padding:.75rem;border-radius:8px;border-top-right-radius:2px;max-width:80%;font-size:.85rem;">${message}</div><div style="width:32px;height:32px;background:#1a365d;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;">👤</div>`;chatMessages.appendChild(userMsg);const botMsg=document.createElement('div');botMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;';botMsg.innerHTML=`<div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;" id="floatingAIResponse"><span class="thinking-dots">正在思考<span>.</span></span></div>`;chatMessages.appendChild(botMsg);chatMessages.scrollTop=chatMessages.scrollHeight;input.value='';let thinkingInterval=setInterval(()=>{const dots=botMsg.querySelector('.thinking-dots');if(dots){const text=dots.textContent;dots.innerHTML=text.endsWith('...')?'正在思考':text+'.';}},500);const responseText=botMsg.querySelector('#floatingAIResponse');floatingAIFullContent='';fetch('http://localhost:8000/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:'student_001',message:message})}).then(response=>{if(!response.ok)throw new Error('API请求失败');const reader=response.body.getReader();const decoder=new TextDecoder();function read(){reader.read().then(({done,value})=>{if(done){clearInterval(thinkingInterval);return;}const chunk=decoder.decode(value,{stream:true});const lines=chunk.split('\n');for(const line of lines){if(line.startsWith('data:')){try{const data=JSON.parse(line.slice(5));if(data.content){clearInterval(thinkingInterval);floatingAIFullContent+=data.content;responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}<span class="cursor">|</span></div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.done){responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}</div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.error){clearInterval(thinkingInterval);responseText.innerHTML=`抱歉出现问题: ${data.error}`;}}catch(e){}}}if(!done)read();});}read();}).catch(error=>{clearInterval(thinkingInterval);responseText.innerHTML=`连接失败: ${error.message}`;});}</script>
+</body>
+</html>

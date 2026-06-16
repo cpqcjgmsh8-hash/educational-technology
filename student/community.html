@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社群 - 国家开放大学教育技术学课程</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .community-tabs {
+            display: flex;
+            gap: 0;
+            background: white;
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .community-tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+        .community-tab:hover {
+            background: var(--hover-bg);
+        }
+        .community-tab.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .community-tab span:first-child {
+            font-size: 1.2rem;
+        }
+        .community-content {
+            display: none;
+        }
+        .community-content.active {
+            display: block;
+        }
+        .whiteboard-area {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .whiteboard-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            background: var(--hover-bg);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .wb-tool {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            transition: all 0.2s;
+        }
+        .wb-tool:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .wb-tool.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .wb-divider {
+            width: 1px;
+            height: 24px;
+            background: #ddd;
+            margin: 0 0.25rem;
+        }
+        .whiteboard-canvas {
+            width: 100%;
+            height: 300px;
+            cursor: crosshair;
+        }
+        .text-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .draggable-text {
+            position: absolute;
+            padding: 8px 12px;
+            background: white;
+            border: 2px solid var(--secondary-color);
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: Microsoft YaHei, sans-serif;
+            cursor: move;
+            pointer-events: auto;
+            user-select: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .draggable-text:hover {
+            border-color: #e53e3e;
+        }
+        .draggable-text.dragging {
+            opacity: 0.8;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+        .text-input-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+        }
+        .text-input-popup.active {
+            display: block;
+        }
+        .text-input-popup input {
+            width: 200px;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .text-input-popup button {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .post-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .post-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: none;
+        }
+        .post-input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+        .reply-item {
+            padding: 0.75rem;
+            margin-left: 2rem;
+            background: var(--hover-bg);
+            border-radius: 6px;
+            margin-top: 0.5rem;
+        }
+        .reply-item .author {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+        }
+        .reply-item .content {
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+        }
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--hover-bg);
+            padding-bottom: 0.5rem;
+        }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: var(--text-light);
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .tab-btn:hover {
+            background: var(--hover-bg);
+        }
+        .tab-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .project-card {
+            background: var(--hover-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .project-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .project-title {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .project-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        .project-content {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+            line-height: 1.6;
+        }
+        .project-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .tag {
+            padding: 0.25rem 0.5rem;
+            background: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        .evaluation-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #ddd;
+        }
+        .eval-btn {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .eval-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+        .eval-btn.active {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+        .task-card {
+            background: linear-gradient(135deg, var(--secondary-color), #2d4a6f);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        .task-card h4 {
+            margin-bottom: 0.5rem;
+        }
+        .task-card p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        .task-deadline {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .group-info {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教育技术学</h1>
+                    <p>欢迎，张同学</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">主导航</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a href="course.html" class="nav-item">
+                    <span class="icon">📖</span>
+                    <span>课程</span>
+                </a>
+                <a href="community.html" class="nav-item active">
+                    <span class="icon">👥</span>
+                    <span>社群</span>
+                </a>
+                <a href="ai-center.html" class="nav-item">
+                    <span class="icon">🤖</span>
+                    <span>智能体中心</span>
+                </a>
+                <a href="report.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学习报告</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>社群学习</h1>
+                <p>三级讨论社群，与同学和老师互动交流</p>
+            </div>
+
+            <div class="group-info">
+                <div style="display: flex; align-items: center; gap: 1.5rem;">
+                    <div style="width: 60px; height: 60px; background: var(--secondary-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                        👥
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="color: var(--secondary-color); margin-bottom: 0.25rem;">第四小组</h3>
+                        <p style="color: var(--text-light); font-size: 0.85rem;">成员：李明辉、王晓芳、陈思思、张同学（你）</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--secondary-color);">8</div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">讨论帖</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--secondary-color);">12</div>
+                        <div style="font-size: 0.75rem; color: var(--text-light);">互动次数</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-tabs">
+                <button class="community-tab active" onclick="switchCommunityTab('group')">
+                    <span>👥</span>
+                    <span>组内讨论</span>
+                </button>
+                <button class="community-tab" onclick="switchCommunityTab('showcase')">
+                    <span>🎯</span>
+                    <span>组间展示</span>
+                </button>
+                <button class="community-tab" onclick="switchCommunityTab('class')">
+                    <span>🎓</span>
+                    <span>班内交互</span>
+                </button>
+            </div>
+
+            <div id="group" class="community-content active">
+                <div class="task-card">
+                    <h4>📋 当前任务：协作白板绘制</h4>
+                    <p>使用下方白板，协作完成"在线教学设计流程图"</p>
+                    <span class="task-deadline">截止：6月5日 20:00</span>
+                </div>
+
+                <div class="whiteboard-area" style="position: relative;">
+                    <div class="whiteboard-toolbar">
+                        <button class="wb-tool active" onclick="selectTool('pen')" title="画笔">✏️</button>
+                        <button class="wb-tool" onclick="selectTool('line')" title="直线">📏</button>
+                        <button class="wb-tool" onclick="selectTool('rect')" title="矩形">⬜</button>
+                        <button class="wb-tool" onclick="selectTool('circle')" title="圆形">⭕</button>
+                        <button class="wb-tool" onclick="selectTool('text')" title="添加文字">📝</button>
+                        <div class="wb-divider"></div>
+                        <button class="wb-tool" onclick="generateMindMap()" title="生成思维导图" style="background: #48bb78; color: white;">🧠</button>
+                        <button class="wb-tool" onclick="clearBoard()" title="清除">🗑️</button>
+                        <div style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 0.75rem; color: var(--text-light);">颜色：</span>
+                            <input type="color" id="colorPicker" value="#1a365d" style="width: 28px; height: 28px; border: none; cursor: pointer;">
+                        </div>
+                    </div>
+                    <div style="position: relative;">
+                        <canvas id="whiteboard" class="whiteboard-canvas"></canvas>
+                        <div id="textContainer" class="text-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+                    </div>
+                    <div id="textPopup" class="text-input-popup">
+                        <input type="text" id="textInput" placeholder="输入文字内容...">
+                        <button onclick="addTextToCanvas()">添加</button>
+                    </div>
+                </div>
+
+                <div id="mindmapModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; overflow-y: auto;">
+                    <div style="background: white; margin: 2rem auto; padding: 1.5rem; border-radius: 12px; max-width: 900px; width: 90%; max-height: 85vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h2 style="margin: 0;">🧠 思维导图</h2>
+                            <button onclick="closeMindMap()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+                        </div>
+                        <div id="mindmapLoading" style="text-align: center; padding: 2rem;">正在生成思维导图...</div>
+                        <div id="mindmapContent" style="display: none;"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">💬 组内讨论</h3>
+                    <div class="discussion-list" id="groupDiscussion">
+                        <div class="discussion-item">
+                            <div class="author">李明辉</div>
+                            <div class="content">我先画一个ADDIE模型的框架，大家一起补充内容</div>
+                            <div class="reply-item">
+                                <span class="author">王晓芳</span>
+                                <div class="content">好的，我在分析阶段添加一些内容</div>
+                            </div>
+                        </div>
+                        <div class="discussion-item">
+                            <div class="author">陈思思</div>
+                            <div class="content">我来负责设计部分的插图</div>
+                        </div>
+                        <div class="discussion-item">
+                            <div class="author">张同学（你）</div>
+                            <div class="content">我负责整理文字说明部分</div>
+                        </div>
+                    </div>
+                    <div class="post-input-container">
+                        <textarea class="post-input" id="groupPostInput" placeholder="在小组内发言..." rows="2"></textarea>
+                        <button class="btn btn-primary" onclick="postToGroup()">发送</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="showcase" class="community-content">
+                <div class="tabs-container">
+                    <button class="tab-btn active" onclick="switchProjectTab(1)">第一小组</button>
+                    <button class="tab-btn" onclick="switchProjectTab(2)">第二小组</button>
+                    <button class="tab-btn" onclick="switchProjectTab(3)">第三小组</button>
+                    <button class="tab-btn" onclick="switchProjectTab(4)">我们组</button>
+                </div>
+
+                <div class="project-card" id="projectDisplay">
+                    <div class="project-header">
+                        <div class="project-avatar">一</div>
+                        <div>
+                            <div class="project-title">第一小组 · 在线互动教学设计案</div>
+                            <div class="project-time">发布于 2小时前</div>
+                        </div>
+                    </div>
+                    <div class="project-content">
+                        我们的设计方案包括：<br>
+                        1. 课前：利用问卷星进行学情分析<br>
+                        2. 课中：腾讯会议+协作白板进行实时互动<br>
+                        3. 课后：利用AI工具进行个性化辅导<br><br>
+                        亮点：设计了10种以上的互动活动，包括投票、头脑风暴、小组PK等。
+                    </div>
+                    <div class="project-tags">
+                        <span class="tag">在线教学</span>
+                        <span class="tag">互动设计</span>
+                        <span class="tag">ADDIE模型</span>
+                    </div>
+                    <div class="evaluation-bar">
+                        <button class="eval-btn" onclick="rateProject('like')">👍 12</button>
+                        <button class="eval-btn" onclick="rateProject('star')">⭐ 8</button>
+                        <button class="eval-btn" onclick="rateProject('comment')">💬 5</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">💬 评价留言</h3>
+                    <div class="post-input-container">
+                        <textarea class="post-input" id="projectCommentInput" placeholder="写下你的评价或建议..." rows="2"></textarea>
+                        <button class="btn btn-primary" onclick="postProjectComment()">发送</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="class" class="community-content">
+                <div class="task-card">
+                    <h4>📌 本周讨论任务</h4>
+                    <p>主题：在线学习的挑战与机遇<br>
+                    要求：结合自身学习经历，谈谈在线学习的优势与不足</p>
+                    <span class="task-deadline">截止：6月6日 18:00 | 已参与：23人</span>
+                </div>
+
+                <div class="tabs-container">
+                    <button class="tab-btn active" onclick="switchClassTab('all')">全部</button>
+                    <button class="tab-btn" onclick="switchClassTab('task')">任务相关</button>
+                    <button class="tab-btn" onclick="switchClassTab('question')">问答</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">💬 全班讨论区</h3>
+                    <div class="discussion-list" id="classDiscussion">
+                        <div class="discussion-item">
+                            <div class="author">张老师</div>
+                            <div class="content">欢迎大家积极参与本周讨论任务！请结合实际学习经验发言。</div>
+                        </div>
+                        <div class="discussion-item">
+                            <div class="author">李明辉</div>
+                            <div class="content">我认为在线学习最大的挑战是时间管理。没有固定的时间表，很容易拖延。</div>
+                            <div class="reply-item">
+                                <span class="author">王晓芳</span>
+                                <div class="content">深有同感！我一般会制定学习计划来克服这个问题。</div>
+                            </div>
+                            <div class="reply-item">
+                                <span class="author">陈思思</span>
+                                <div class="content">可以利用番茄工作法，每25分钟学习，5分钟休息。</div>
+                            </div>
+                        </div>
+                        <div class="discussion-item">
+                            <div class="author">王晓芳</div>
+                            <div class="content">在线学习的优势是可以反复观看视频，不像课堂只能听一遍。</div>
+                        </div>
+                        <div class="discussion-item">
+                            <div class="author">陈思思</div>
+                            <div class="content">游戏化学习确实能提高参与度，比如完成作业可以获得积分。</div>
+                        </div>
+                        <div class="discussion-item">
+                            <div class="author">赵学习</div>
+                            <div class="content">小组协作功能让学习不再孤单，有问题可以随时讨论。</div>
+                        </div>
+                        <div class="discussion-item">
+                            <div class="author">钱同学</div>
+                            <div class="content">AI学习伙伴真的很方便，深夜学习也能得到即时反馈。</div>
+                        </div>
+                    </div>
+                    <div class="post-input-container">
+                        <textarea class="post-input" id="classPostInput" placeholder="参与全班讨论..." rows="2"></textarea>
+                        <button class="btn btn-primary" onclick="postToClass()">发言</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const projectData = {
+            1: { avatar: '一', title: '第一小组 · 在线互动教学设计案', author: '李明辉', time: '2小时前', content: '我们的设计方案包括：<br>1. 课前：利用问卷星进行学情分析<br>2. 课中：腾讯会议+协作白板进行实时互动<br>3. 课后：利用AI工具进行个性化辅导<br><br>亮点：设计了10种以上的互动活动，包括投票、头脑风暴、小组PK等。', tags: ['在线教学', '互动设计', 'ADDIE模型'], likes: 12, stars: 8, comments: 5 },
+            2: { avatar: '二', title: '第二小组 · AI辅助学习工具原型', author: '王晓芳', time: '5小时前', content: '我们设计了一款基于AI的学习助手，具有以下功能：<br>1. 智能问答：解答学习问题<br>2. 学习规划：制定个性化学习计划<br>3. 进度追踪：记录学习轨迹<br>4. 薄弱点诊断：识别知识盲区<br><br>原型已发布，欢迎试用！', tags: ['AI教育', '学习工具', '智能辅导'], likes: 18, stars: 12, comments: 9 },
+            3: { avatar: '三', title: '第三小组 · 游戏化学习设计思路', author: '陈思思', time: '1天前', content: '我们的游戏化设计方案包括：<br>1. 积分系统：完成任务获得积分<br>2. 徽章成就：解锁特殊成就<br>3. 排行榜：激发学习动力<br>4. 剧情模式：用故事线串联知识点<br>5. 团队副本：小组协作挑战<br><br>预期效果：提升学习参与度30%以上。', tags: ['游戏化', '激励机制', '参与度'], likes: 15, stars: 10, comments: 7 },
+            4: { avatar: '四', title: '第四小组 · 协作文板学习成果', author: '张同学（你）', time: '刚刚', content: '我们小组通过协作白板共同完成了在线教学设计流程图！<br>大家在白板上分工合作：<br>1. 李明辉：框架设计<br>2. 王晓芳：分析阶段<br>3. 陈思思：设计插图<br>4. 张同学：文字说明<br><br>这是我们第一次使用协作白板进行小组学习，感觉很有成效！', tags: ['协作学习', '白板工具', '小组成果'], likes: 6, stars: 4, comments: 2 }
+        };
+
+        let currentTool = 'pen';
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let ctx;
+        let startX, startY;
+
+        function initWhiteboard() {
+            const canvas = document.getElementById('whiteboard');
+            ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.strokeStyle = '#1a365d';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            document.getElementById('textInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addTextToCanvas();
+                }
+            });
+        }
+
+        function selectTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.wb-tool').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const textPopup = document.getElementById('textPopup');
+            if (tool === 'text') {
+                textPopup.classList.add('active');
+                document.getElementById('textInput').focus();
+            } else {
+                textPopup.classList.remove('active');
+            }
+        }
+
+        function clearBoard() {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        }
+
+        function startDrawing(e) {
+            if (currentTool === 'text') return;
+
+            isDrawing = true;
+            const rect = e.target.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+
+            if (currentTool === 'line' || currentTool === 'rect' || currentTool === 'circle') {
+                startX = lastX;
+                startY = lastY;
+            }
+        }
+
+        function draw(e) {
+            if (!isDrawing || currentTool === 'text') return;
+
+            const rect = e.target.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const color = document.getElementById('colorPicker').value;
+
+            if (currentTool === 'pen') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = color;
+                ctx.stroke();
+            }
+
+            lastX = x;
+            lastY = y;
+        }
+
+        function stopDrawing(e) {
+            if (!isDrawing || currentTool === 'text') return;
+
+            const rect = e.target.getBoundingClientRect();
+            const endX = e.clientX - rect.left;
+            const endY = e.clientY - rect.top;
+            const color = document.getElementById('colorPicker').value;
+
+            if (currentTool === 'line') {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            } else if (currentTool === 'rect') {
+                ctx.strokeStyle = color;
+                ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+            } else if (currentTool === 'circle') {
+                const radius = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                ctx.beginPath();
+                ctx.arc(startX, startY, radius, 0, Math.PI * 2);
+                ctx.strokeStyle = color;
+                ctx.stroke();
+            }
+
+            isDrawing = false;
+        }
+
+        function addTextToCanvas() {
+            const textInput = document.getElementById('textInput');
+            const text = textInput.value.trim();
+            if (!text) return;
+
+            const color = document.getElementById('colorPicker').value;
+            const textContainer = document.getElementById('textContainer');
+
+            const textBox = document.createElement('div');
+            textBox.className = 'draggable-text';
+            textBox.textContent = text;
+            textBox.style.color = color;
+            textBox.style.borderColor = color;
+            textBox.style.left = lastX + 'px';
+            textBox.style.top = lastY + 'px';
+
+            textBox.addEventListener('mousedown', startDrag);
+            textBox.addEventListener('dblclick', function() {
+                if (confirm('删除此文本框？')) {
+                    textBox.remove();
+                }
+            });
+
+            textContainer.appendChild(textBox);
+
+            textInput.value = '';
+            document.getElementById('textPopup').classList.remove('active');
+
+            isDrawing = false;
+        }
+
+        let isDragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+        let currentDragElement = null;
+
+        function startDrag(e) {
+            if (currentTool !== 'text') return;
+
+            isDragging = true;
+            currentDragElement = e.target;
+            currentDragElement.classList.add('dragging');
+
+            const rect = currentDragElement.getBoundingClientRect();
+            const containerRect = document.getElementById('textContainer').getBoundingClientRect();
+
+            dragOffsetX = e.clientX - rect.left;
+            dragOffsetY = e.clientY - rect.top;
+
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function drag(e) {
+            if (!isDragging || !currentDragElement) return;
+
+            const container = document.getElementById('textContainer');
+            const containerRect = container.getBoundingClientRect();
+
+            let x = e.clientX - containerRect.left - dragOffsetX;
+            let y = e.clientY - containerRect.top - dragOffsetY;
+
+            x = Math.max(0, Math.min(x, containerRect.width - currentDragElement.offsetWidth));
+            y = Math.max(0, Math.min(y, containerRect.height - currentDragElement.offsetHeight));
+
+            currentDragElement.style.left = x + 'px';
+            currentDragElement.style.top = y + 'px';
+        }
+
+        function stopDrag() {
+            if (currentDragElement) {
+                currentDragElement.classList.remove('dragging');
+            }
+            isDragging = false;
+            currentDragElement = null;
+            document.removeEventListener('mousemove', drag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        function clearBoard() {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            document.getElementById('textContainer').innerHTML = '';
+        }
+
+        function closeMindMap() {
+            document.getElementById('mindmapModal').style.display = 'none';
+        }
+
+        function generateMindMap() {
+            // 收集白板上的所有文字内容
+            const textBoxes = document.querySelectorAll('#textContainer .draggable-text');
+            let textContent = '';
+
+            if (textBoxes.length === 0) {
+                alert('请先在白板上添加一些文字内容');
+                return;
+            }
+
+            textBoxes.forEach(box => {
+                textContent += box.textContent + '\n';
+            });
+
+            // 显示模态框
+            const modal = document.getElementById('mindmapModal');
+            const loading = document.getElementById('mindmapLoading');
+            const content = document.getElementById('mindmapContent');
+
+            modal.style.display = 'block';
+            loading.style.display = 'block';
+            content.style.display = 'none';
+
+            // 调用API生成思维导图
+            fetch('http://localhost:8000/api/mindmap/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: textContent })
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                content.style.display = 'block';
+
+                if (data.error) {
+                    content.innerHTML = `<div style="color: red; padding: 1rem;">生成失败: ${data.error}</div>`;
+                } else {
+                    renderMindMap(data, content);
+                }
+            })
+            .catch(error => {
+                loading.style.display = 'none';
+                content.style.display = 'block';
+                content.innerHTML = `<div style="color: red; padding: 1rem;">连接失败: ${error.message}</div>`;
+            });
+        }
+
+        function renderMindMap(data, container) {
+            if (!data.nodes || !data.root) {
+                container.innerHTML = '<div style="padding: 1rem;">无法解析思维导图数据</div>';
+                return;
+            }
+
+            const nodeMap = {};
+            data.nodes.forEach(n => nodeMap[n.id] = n);
+
+            function createNodeElement(node, level = 0) {
+                const div = document.createElement('div');
+                div.style.marginLeft = `${level * 30}px`;
+                div.style.marginTop = '8px';
+
+                const colors = ['#1a365d', '#2d4a6f', '#48bb78', '#dd6b20', '#805ad5'];
+                const bgColor = colors[level % colors.length];
+
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        ${level > 0 ? '<span style="color: #ccc;">└─</span>' : ''}
+                        <span style="background: ${bgColor}; color: white; padding: 6px 12px; border-radius: 6px; font-size: 0.9rem;">
+                            ${node.name}
+                        </span>
+                    </div>
+                `;
+
+                if (node.children && node.children.length > 0) {
+                    node.children.forEach(childId => {
+                        const childNode = nodeMap[childId];
+                        if (childNode) {
+                            div.appendChild(createNodeElement(childNode, level + 1));
+                        }
+                    });
+                }
+
+                return div;
+            }
+
+            const rootNode = nodeMap[data.root];
+            if (rootNode) {
+                container.innerHTML = '';
+                container.appendChild(createNodeElement(rootNode));
+            } else {
+                container.innerHTML = '<div style="padding: 1rem;">思维导图根节点不存在</div>';
+            }
+        }
+
+        function switchCommunityTab(tab) {
+            document.querySelectorAll('.community-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.community-content').forEach(c => c.classList.remove('active'));
+
+            document.querySelector(`.community-tab:nth-child(${tab === 'group' ? 1 : tab === 'showcase' ? 2 : 3})`).classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        function switchProjectTab(num) {
+            document.querySelectorAll('#showcase .tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === num - 1);
+            });
+            const data = projectData[num];
+            const projectDiv = document.getElementById('projectDisplay');
+            projectDiv.innerHTML = `
+                <div class="project-header">
+                    <div class="project-avatar">${data.avatar}</div>
+                    <div>
+                        <div class="project-title">${data.title}</div>
+                        <div class="project-time">发布于 ${data.time}</div>
+                    </div>
+                </div>
+                <div class="project-content">${data.content}</div>
+                <div class="project-tags">${data.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+                <div class="evaluation-bar">
+                    <button class="eval-btn" onclick="rateProject('like')">👍 ${data.likes}</button>
+                    <button class="eval-btn" onclick="rateProject('star')">⭐ ${data.stars}</button>
+                    <button class="eval-btn" onclick="rateProject('comment')">💬 ${data.comments}</button>
+                </div>
+            `;
+        }
+
+        function rateProject(type) {
+            event.target.classList.toggle('active');
+            const text = event.target.textContent;
+            const num = parseInt(text.match(/\d+/)[0]);
+            event.target.textContent = text.replace(/\d+/, num + 1);
+            alert('评价成功！');
+        }
+
+        function postProjectComment() {
+            const input = document.getElementById('projectCommentInput');
+            if (!input.value.trim()) return;
+
+            const commentList = document.getElementById('commentList');
+            if (!commentList) {
+                const newList = document.createElement('div');
+                newList.id = 'commentList';
+                newList.className = 'comment-list';
+                newList.style.marginTop = '1rem';
+                newList.innerHTML = `
+                    <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 0.75rem; color: var(--text-color);">我的评价：</div>
+                    <div class="discussion-item" style="background: rgba(26,54,93,0.05); border-left: 3px solid var(--secondary-color);">
+                        <div class="author">张同学（你）</div>
+                        <div class="content">${input.value}</div>
+                    </div>
+                `;
+                input.parentElement.parentElement.insertBefore(newList, input.parentElement);
+            } else {
+                const newComment = document.createElement('div');
+                newComment.className = 'discussion-item';
+                newComment.style.background = 'rgba(26,54,93,0.05)';
+                newComment.style.borderLeft = '3px solid var(--secondary-color)';
+                newComment.innerHTML = `
+                    <div class="author">张同学（你）</div>
+                    <div class="content">${input.value}</div>
+                `;
+                commentList.appendChild(newComment);
+            }
+
+            input.value = '';
+            alert('评价已发布！');
+        }
+
+        function postToGroup() {
+            const input = document.getElementById('groupPostInput');
+            if (!input.value.trim()) return;
+            const newPost = document.createElement('div');
+            newPost.className = 'discussion-item';
+            newPost.innerHTML = `<div class="author">张同学（你）</div><div class="content">${input.value}</div>`;
+            document.getElementById('groupDiscussion').appendChild(newPost);
+
+            const postContent = input.value;
+            input.value = '';
+
+            // 助教智能体回复
+            const assistantReply = document.createElement('div');
+            assistantReply.className = 'reply-item';
+            assistantReply.innerHTML = `
+                <span class="author">👨‍🏫 助教</span>
+                <div class="content" id="assistantReplyContent">正在思考...</div>
+            `;
+            newPost.appendChild(assistantReply);
+            newPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            fetch('http://localhost:8000/api/chat/assistant/stream', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: 'student_001', message: postContent })
+            })
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullContent = '';
+
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            document.getElementById('assistantReplyContent').textContent = fullContent || '已收到你的讨论！';
+                            return;
+                        }
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data:')) {
+                                try {
+                                    const data = JSON.parse(line.slice(5));
+                                    if (data.content) {
+                                        fullContent += data.content;
+                                        document.getElementById('assistantReplyContent').textContent = fullContent;
+                                    }
+                                    if (data.done || data.error) {
+                                        document.getElementById('assistantReplyContent').textContent = fullContent || '已收到你的讨论！';
+                                    }
+                                } catch (e) {}
+                            }
+                        }
+                        if (!done) read();
+                    });
+                }
+                read();
+            })
+            .catch(() => {
+                document.getElementById('assistantReplyContent').textContent = '已收到你的讨论！';
+            });
+        }
+
+        function postToClass() {
+            const input = document.getElementById('classPostInput');
+            if (!input.value.trim()) return;
+            const newPost = document.createElement('div');
+            newPost.className = 'discussion-item';
+            newPost.innerHTML = `<div class="author">张同学（你）</div><div class="content">${input.value}</div>`;
+            document.getElementById('classDiscussion').appendChild(newPost);
+
+            const postContent = input.value;
+            input.value = '';
+
+            // 助教智能体回复
+            const assistantReply = document.createElement('div');
+            assistantReply.className = 'reply-item';
+            assistantReply.innerHTML = `
+                <span class="author">👨‍🏫 助教</span>
+                <div class="content" id="assistantReplyContentClass">正在思考...</div>
+            `;
+            newPost.appendChild(assistantReply);
+            newPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            fetch('http://localhost:8000/api/chat/assistant/stream', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: 'student_001', message: postContent })
+            })
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullContent = '';
+
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            document.getElementById('assistantReplyContentClass').textContent = fullContent || '已收到你的讨论！';
+                            return;
+                        }
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.startsWith('data:')) {
+                                try {
+                                    const data = JSON.parse(line.slice(5));
+                                    if (data.content) {
+                                        fullContent += data.content;
+                                        document.getElementById('assistantReplyContentClass').textContent = fullContent;
+                                    }
+                                    if (data.done || data.error) {
+                                        document.getElementById('assistantReplyContentClass').textContent = fullContent || '已收到你的讨论！';
+                                    }
+                                } catch (e) {}
+                            }
+                        }
+                        if (!done) read();
+                    });
+                }
+                read();
+            })
+            .catch(() => {
+                document.getElementById('assistantReplyContentClass').textContent = '已收到你的讨论！';
+            });
+        }
+
+        function switchClassTab(tab) {
+            document.querySelectorAll('#class .tab-btn').forEach((btn, i) => {
+                const types = ['all', 'task', 'question'];
+                btn.classList.toggle('active', types[i] === tab);
+            });
+        }
+
+        window.addEventListener('load', initWhiteboard);
+    </script>
+    <script>const floatingAIHTML=`<div id="floatingAI" style="position:fixed;bottom:20px;right:20px;z-index:9999;"><div id="floatingAIBtn" onclick="toggleFloatingAI()" style="width:56px;height:56px;background:linear-gradient(135deg,#1a365d,#2d4a6f);border-radius:50%;box-shadow:0 4px 16px rgba(26,54,93,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 20px rgba(26,54,93,0.5)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(26,54,93,0.4)';">🤖</div><div id="floatingAIPanel" style="display:none;position:absolute;bottom:70px;right:0;width:380px;height:520px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;flex-direction:column;"><div style="background:linear-gradient(135deg,#1a365d,#2d4a6f);color:white;padding:1rem;display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:.75rem;"><span style="font-size:1.5rem;">🤖</span><div><div style="font-weight:bold;">学习伙伴</div><div style="font-size:.7rem;opacity:.8;">在线</div></div></div><button onclick="toggleFloatingAI()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:.25rem;">✕</button></div><div id="floatingAIMessages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;"><div style="display:flex;gap:.75rem;align-items:flex-start;"><div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;line-height:1.5;">你好！我是学习伙伴，有什么可以帮你的吗？</div></div></div><div style="padding:.75rem;border-top:1px solid #eee;display:flex;gap:.5rem;"><input type="text" id="floatingAIInput" placeholder="输入问题..." style="flex:1;padding:.75rem;border:1px solid #ddd;border-radius:8px;font-size:.85rem;" onkeypress="if(event.key==='Enter')sendFloatingAIMessage()"><button onclick="sendFloatingAIMessage()" style="background:#1a365d;color:white;border:none;border-radius:8px;padding:.75rem 1rem;cursor:pointer;font-size:.85rem;">发送</button></div></div></div>`;document.write(floatingAIHTML);function toggleFloatingAI(){const panel=document.getElementById('floatingAIPanel');const btn=document.getElementById('floatingAIBtn');if(panel.style.display==='none'){panel.style.display='flex';btn.textContent='✕';}else{panel.style.display='none';btn.textContent='🤖';}}let floatingAIFullContent='';function sendFloatingAIMessage(){const input=document.getElementById('floatingAIInput');const message=input.value.trim();if(!message)return;const chatMessages=document.getElementById('floatingAIMessages');const userMsg=document.createElement('div');userMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;justify-content:flex-end;';userMsg.innerHTML=`<div style="background:#1a365d;color:white;padding:.75rem;border-radius:8px;border-top-right-radius:2px;max-width:80%;font-size:.85rem;">${message}</div><div style="width:32px;height:32px;background:#1a365d;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;">👤</div>`;chatMessages.appendChild(userMsg);const botMsg=document.createElement('div');botMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;';botMsg.innerHTML=`<div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;" id="floatingAIResponse"><span class="thinking-dots">正在思考<span>.</span></span></div>`;chatMessages.appendChild(botMsg);chatMessages.scrollTop=chatMessages.scrollHeight;input.value='';let thinkingInterval=setInterval(()=>{const dots=botMsg.querySelector('.thinking-dots');if(dots){const text=dots.textContent;dots.innerHTML=text.endsWith('...')?'正在思考':text+'.';}},500);const responseText=botMsg.querySelector('#floatingAIResponse');floatingAIFullContent='';fetch('http://localhost:8000/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:'student_001',message:message})}).then(response=>{if(!response.ok)throw new Error('API请求失败');const reader=response.body.getReader();const decoder=new TextDecoder();function read(){reader.read().then(({done,value})=>{if(done){clearInterval(thinkingInterval);return;}const chunk=decoder.decode(value,{stream:true});const lines=chunk.split('\n');for(const line of lines){if(line.startsWith('data:')){try{const data=JSON.parse(line.slice(5));if(data.content){clearInterval(thinkingInterval);floatingAIFullContent+=data.content;responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}<span class="cursor">|</span></div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.done){responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}</div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.error){clearInterval(thinkingInterval);responseText.innerHTML=`抱歉出现问题: ${data.error}`;}}catch(e){}}}if(!done)read();});}read();}).catch(error=>{clearInterval(thinkingInterval);responseText.innerHTML=`连接失败: ${error.message}`;});}</script>
+</body>
+</html>

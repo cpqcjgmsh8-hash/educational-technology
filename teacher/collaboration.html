@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>协作分析 - 国家开放大学教育技术学课程</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教师端</h1>
+                    <p>张老师</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">教学管理</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学情总览</span>
+                </a>
+                <a href="course-management.html" class="nav-item">
+                    <span class="icon">📚</span>
+                    <span>课程管理</span>
+                </a>
+                <a href="collaboration.html" class="nav-item active">
+                    <span class="icon">👥</span>
+                    <span>协作分析</span>
+                </a>
+                <a href="ai-monitoring.html" class="nav-item">
+                    <span class="icon">🤖</span>
+                    <span>智能体监控</span>
+                </a>
+                <a href="suggestions.html" class="nav-item">
+                    <span class="icon">💡</span>
+                    <span>教学改进建议</span>
+                </a>
+            </div>
+            <div class="nav-section" style="margin-top: auto;">
+                <div class="nav-section-title">返回</div>
+                <a href="../index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>返回首页</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>协作分析</h1>
+                <p>分析学生小组协作学习和讨论互动情况</p>
+            </div>
+
+            <div class="collaboration-chart">
+                <h2 class="card-title">📈 协作学习趋势</h2>
+                <div class="chart-placeholder">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                        <p>协作学习数据趋势图</p>
+                        <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 0.5rem;">
+                            横轴：周次 · 纵轴：互动次数/参与人数
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <h3>6</h3>
+                    <p>学习小组数</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💬</div>
+                    <h3>89</h3>
+                    <p>组内讨论数</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <h3>23</h3>
+                    <p>成果展示数</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">👥 小组协作详情</h2>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+                        <thead>
+                            <tr style="background: var(--hover-bg);">
+                                <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color);">小组名称</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">成员数</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">讨论数</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">成果提交</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">互评得分</th>
+                                <th style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">活跃度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span>👥</span>
+                                        <span>第一小组</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">8人</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">18</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">已提交</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="color: var(--success-color);">92分</span>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="background: #c6f6d5; color: #276749; padding: 0.25rem 0.5rem; border-radius: 4px;">非常高</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span>👥</span>
+                                        <span>第二小组</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">8人</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">15</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">已提交</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="color: var(--success-color);">88分</span>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="background: #c6f6d5; color: #276749; padding: 0.25rem 0.5rem; border-radius: 4px;">高</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span>👥</span>
+                                        <span>第三小组</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">8人</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">12</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">已提交</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="color: var(--accent-color);">85分</span>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="background: #feebc8; color: #c05621; padding: 0.25rem 0.5rem; border-radius: 4px;">中等</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span>👥</span>
+                                        <span>第四小组</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">8人</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">16</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">已提交</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="color: var(--success-color);">90分</span>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="background: #c6f6d5; color: #276749; padding: 0.25rem 0.5rem; border-radius: 4px;">非常高</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span>👥</span>
+                                        <span>第五小组</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">8人</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">14</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">已提交</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="color: var(--success-color);">87分</span>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="background: #c6f6d5; color: #276749; padding: 0.25rem 0.5rem; border-radius: 4px;">高</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 1rem; border-bottom: 1px solid var(--border-color);">
+                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                        <span>👥</span>
+                                        <span>第六小组</span>
+                                    </div>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">8人</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">14</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">待提交</td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="color: var(--warning-color);">--</span>
+                                </td>
+                                <td style="padding: 1rem; text-align: center; border-bottom: 1px solid var(--border-color);">
+                                    <span style="background: #feebc8; color: #c05621; padding: 0.25rem 0.5rem; border-radius: 4px;">中等</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">🎯 班级讨论任务完成情况</h2>
+                <div class="course-list">
+                    <div class="course-item" style="cursor: default;">
+                        <div class="course-number">✓</div>
+                        <div class="course-details">
+                            <h4>讨论任务一：在线学习的挑战与机遇</h4>
+                            <p>参与人数：42人 · 发言总数：156条</p>
+                        </div>
+                        <span class="task-status completed">已完成</span>
+                    </div>
+                    <div class="course-item" style="cursor: default;">
+                        <div class="course-number">2</div>
+                        <div class="course-details">
+                            <h4>讨论任务二：教育技术工具应用分享</h4>
+                            <p>参与人数：35人 · 发言总数：98条</p>
+                        </div>
+                        <span class="task-status in-progress">进行中</span>
+                    </div>
+                    <div class="course-item" style="cursor: default;">
+                        <div class="course-number">3</div>
+                        <div class="course-details">
+                            <h4>讨论任务三：AI在教育中的应用展望</h4>
+                            <p>截止时间：下周一 18:00</p>
+                        </div>
+                        <span class="task-status pending">待开始</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

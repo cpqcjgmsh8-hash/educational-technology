@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>章节测验 - 教育技术学</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .back-btn { position: fixed; top: 1rem; left: 280px; color: var(--text-color); text-decoration: none; font-size: 0.9rem; padding: 0.5rem 1rem; background: var(--hover-bg); border-radius: 8px; transition: all 0.2s; z-index: 100; }
+        .back-btn:hover { background: var(--secondary-color); color: white; }
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .chapter-badge {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+        }
+        .quiz-progress {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--hover-bg);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary-color);
+            transition: width 0.3s;
+        }
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            white-space: nowrap;
+        }
+        .question-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .question-number {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 0.85rem;
+            margin-right: 0.75rem;
+        }
+        .question-type {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+        }
+        .question-text {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.25rem;
+            background: var(--hover-bg);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-item:hover {
+            border-color: var(--secondary-color);
+            background: rgba(26,54,93,0.05);
+        }
+        .option-item.selected {
+            border-color: var(--secondary-color);
+            background: rgba(26,54,93,0.1);
+        }
+        .option-item.correct {
+            border-color: #48bb78;
+            background: rgba(72,187,120,0.1);
+        }
+        .option-item.wrong {
+            border-color: #f56565;
+            background: rgba(245,101,101,0.1);
+        }
+        .option-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-right: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .option-item.selected .option-checkbox {
+            border-color: var(--secondary-color);
+            background: var(--secondary-color);
+        }
+        .option-item.selected .option-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 0.85rem;
+        }
+        .option-text {
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+        .explanation-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(26,54,93,0.05);
+            border-left: 4px solid var(--secondary-color);
+            border-radius: 0 8px 8px 0;
+            display: none;
+        }
+        .explanation-box.show {
+            display: block;
+        }
+        .explanation-title {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        .explanation-text {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+        }
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--hover-bg);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .result-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .result-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        .result-text {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+        .result-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .detail-item {
+            padding: 1rem;
+            background: var(--hover-bg);
+            border-radius: 8px;
+        }
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .discussion-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .discussion-title {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--hover-bg);
+        }
+        .discussion-item {
+            padding: 1rem;
+            background: var(--hover-bg);
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+        .discussion-item .author {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .discussion-item .content {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-top: 0.25rem;
+        }
+        .post-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .post-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教育技术学</h1>
+                    <p>课程学习</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">主导航</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>首页</span>
+                </a>
+                <a href="course.html" class="nav-item active">
+                    <span class="icon">📖</span>
+                    <span>课程</span>
+                </a>
+                <a href="community.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>社群</span>
+                </a>
+                <a href="ai-center.html" class="nav-item">
+                    <span class="icon">🤖</span>
+                    <span>智能体中心</span>
+                </a>
+                <a href="report.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学习报告</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content" style="margin-left: 260px;">
+            <a href="course.html" class="back-btn">← 返回课程</a>
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <span class="chapter-badge" id="chapterBadge">第1章 · 章节测验</span>
+                    <h1 id="quizTitle">教育技术学概述</h1>
+                    <div class="quiz-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+                        </div>
+                        <span class="progress-text" id="progressText">第 1/5 题</span>
+                    </div>
+                </div>
+
+                <div id="quizContent">
+                    <div class="question-card">
+                        <h3 class="question-text">
+                            <span class="question-number" id="questionNum">1</span>
+                            <span id="questionText">加载中...</span>
+                            <span class="question-type" id="questionType">单选题</span>
+                        </h3>
+                        <div class="options-list" id="optionsList">
+                        </div>
+                        <div class="explanation-box" id="explanationBox">
+                            <div class="explanation-title">📚 答案解析</div>
+                            <div class="explanation-text" id="explanationText"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-footer">
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一题 →</button>
+                </div>
+
+                <div class="discussion-section">
+                    <h3 class="discussion-title">💬 测验讨论区</h3>
+                    <div class="discussion-item">
+                        <div class="author">李明辉</div>
+                        <div class="content">这道题的多选题有点难，我选了2个选项但是少选了一个正确答案。</div>
+                    </div>
+                    <div class="discussion-item">
+                        <div class="author">王晓芳</div>
+                        <div class="content">多选题要全选对才得分，我建议老师可以把部分正确的也给分。</div>
+                    </div>
+                    <div class="post-input-container">
+                        <textarea class="post-input" id="quizCommentInput" placeholder="参与测验讨论..." rows="2"></textarea>
+                        <button class="btn btn-primary" onclick="postQuizComment()">发言</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 13个章节的测验数据
+        const allQuizzes = {
+            1: {
+                title: "教育技术学导论",
+                questions: [
+                    {
+                        question: "AECT94定义中，教育技术的研究对象是什么？",
+                        options: ["教学资源", "学习过程和学习资源", "教学方法", "信息技术"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "AECT94定义明确指出：教育技术是对学习过程和学习资源进行设计、开发、利用、管理和评价的理论和实践。因此研究对象是'学习过程和学习资源'。"
+                    },
+                    {
+                        question: "以下哪项不属于教育技术的五个研究范畴？",
+                        options: ["设计", "实施", "利用", "管理"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "教育技术的五个研究范畴是：设计(Design)、开发(Develop)、利用(Utilize)、管理(Manage)、评价(Evaluate)。'实施'不在其中。"
+                    },
+                    {
+                        question: "教育技术的发展历程包括哪些阶段？（多选）",
+                        options: ["视觉教育阶段", "听觉教育阶段", "视听教育阶段", "教育技术阶段"],
+                        correct: [0, 2, 3],
+                        type: "multiple",
+                        explanation: "教育技术的发展历程包括：视觉教育阶段(1900-1920)、视听教育阶段(1920-1950)、视听传播阶段(1950-1970)、教育技术阶段(1970至今)。'听觉教育阶段'不是一个独立的阶段。"
+                    },
+                    {
+                        question: "以下哪个不是教育技术的核心方法？",
+                        options: ["系统方法", "经验总结法", "教学设计", "绩效技术"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "教育技术的核心方法包括：系统方法、教学设计、绩效技术。经验总结法是传统的研究方法，不属于教育技术的核心方法。"
+                    },
+                    {
+                        question: "在教育技术发展中，哪个阶段开始引入系统方法？",
+                        options: ["视觉教育阶段", "视听教育阶段", "视听传播阶段", "教育技术阶段"],
+                        correct: 3,
+                        type: "single",
+                        explanation: "在视听传播阶段(1950-1970)，系统方法被引入教育领域。而到了教育技术阶段(1970至今)，系统方法得到了广泛的应用和发展。"
+                    }
+                ]
+            },
+            2: {
+                title: "技术背景下的学习",
+                questions: [
+                    {
+                        question: "行为主义学习理论的主要代表人物是谁？",
+                        options: ["皮亚杰", "斯金纳", "维果茨基", "布鲁纳"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "斯金纳是行为主义学习理论的主要代表人物，提出了操作性条件反射理论。皮亚杰是认知主义代表，维果茨基是社会建构主义代表。"
+                    },
+                    {
+                        question: "认知主义学习理论强调什么？",
+                        options: ["刺激-反应联结", "内在认知过程", "行为习惯形成", "环境强化"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "认知主义学习理论强调学习者的内在认知过程，包括注意、记忆、思维等心理活动，认为学习是信息加工的过程。"
+                    },
+                    {
+                        question: "建构主义学习理论的主要观点包括？（多选）",
+                        options: ["知识是主动建构的", "学习需要社会互动", "知识是对现实的客观反映", "情境对学习有重要影响"],
+                        correct: [0, 1, 3],
+                        type: "multiple",
+                        explanation: "建构主义认为：知识是学习者主动建构的；学习需要社会互动和协作；知识不是对现实的客观反映而是动态建构的；情境对学习有重要影响。"
+                    },
+                    {
+                        question: "人本主义学习理论关注什么？",
+                        options: ["行为结果", "认知结构", "自我实现", "刺激反应"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "人本主义学习理论关注学习者的自我实现和全面发展，强调学习者的情感、需求和自我价值，与马斯洛、罗杰斯等人相关。"
+                    },
+                    {
+                        question: "混合学习（Blended Learning）结合了哪两种学习方式？",
+                        options: ["线上与线下", "个人与小组", "理论与人文", "讲授与讨论"],
+                        correct: 0,
+                        type: "single",
+                        explanation: "混合学习结合了线上学习（数字化学习）和线下学习（传统面对面学习）的优势，是一种融合了多种学习方式的学习模式。"
+                    }
+                ]
+            },
+            3: {
+                title: "学习目标、教学法与技术的关联",
+                questions: [
+                    {
+                        question: "布鲁姆教育目标分类学将教学目标分为哪三个领域？",
+                        options: ["知识、情感、动作技能", "认知、情感、心因动作", "认知、情感、心理运动", "知识、态度、技能"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "布鲁姆将教育目标分为认知领域、情感领域和心因动作（心理运动）领域三个维度。"
+                    },
+                    {
+                        question: "ADDIE模型包括哪些环节？（多选）",
+                        options: ["分析", "设计", "开发", "实施", "评估"],
+                        correct: [0, 1, 2, 3, 4],
+                        type: "multiple",
+                        explanation: "ADDIE模型是教学系统设计的经典模型，包括分析(Analysis)、设计(Design)、开发(Develop)、实施(Implement)和评估(Evaluate)五个环节。"
+                    },
+                    {
+                        question: "形成性评价的主要目的是什么？",
+                        options: ["选拔学生", "给学习分等级", "改进教学过程", "总结学习成果"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "形成性评价是在教学过程中进行的评价，旨在及时发现问题和不足，改进教学过程，促进学习者的持续发展。"
+                    },
+                    {
+                        question: "马杰（Robert Mager）提出的教学目标编写三要素是什么？",
+                        options: ["内容、方法、评估", "条件、行为、标准", "对象、媒体、反馈", "目标、策略、评价"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "马杰提出教学目标的编写应包含三个要素：1）行为表现（做什么）；2）行为条件（在什么条件下）；3）行为标准（达到什么程度）。"
+                    },
+                    {
+                        question: "以下哪种教学方法最能体现'以学习者为中心'的理念？",
+                        options: ["讲授法", "演示法", "问题导向学习", "问答法"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "问题导向学习（PBL）以学习者为中心，通过解决真实问题来建构知识，强调学习者的主动探索和协作学习。"
+                    }
+                ]
+            },
+            4: {
+                title: "教育技术的系统视角",
+                questions: [
+                    {
+                        question: "系统方法的核心思想是什么？",
+                        options: ["整体大于部分之和", "分析还原", "线性因果关系", "单一最优解"],
+                        correct: 0,
+                        type: "single",
+                        explanation: "系统方法的核心思想是整体大于部分之和，强调对系统各组成部分进行整体优化，而非单独优化每个部分。"
+                    },
+                    {
+                        question: "投入-过程-产出模型（IPO模型）描述了什么？",
+                        options: ["教学方法", "系统结构", "学习动机", "资源管理"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "IPO模型（投入-过程-产出）是描述系统结构的基本模型，说明系统如何将输入转化为输出的过程。"
+                    },
+                    {
+                        question: "在教学系统设计中，反馈的作用是什么？（多选）",
+                        options: ["提供学习信息", "调节学习行为", "增加学习负担", "激励学习动机"],
+                        correct: [0, 1, 3],
+                        type: "multiple",
+                        explanation: "反馈在学习中具有重要作用：提供学习信息帮助学习者了解自己的学习状态；调节学习行为使学习更有效；激励学习动机增强学习动力。"
+                    },
+                    {
+                        question: "哪个不是教学系统设计的特征？",
+                        options: ["系统性", "计划性", "即时性", "创造性"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "教学系统设计具有系统性、计划性、创造性等特征，但并非即时性的——它强调系统的规划和设计过程。"
+                    },
+                    {
+                        question: "影响教学系统设计的关键因素包括？",
+                        options: ["学习者特征", "教学目标", "教学资源", "以上都是"],
+                        correct: 3,
+                        type: "single",
+                        explanation: "教学系统设计需要综合考虑学习者特征、教学目标、教学资源等多种因素，进行系统化的分析和设计。"
+                    }
+                ]
+            },
+            5: {
+                title: "教育技术的用户视角",
+                questions: [
+                    {
+                        question: "ARCS动机模型中的'A'代表什么？",
+                        options: ["Attention（注意）", "Achievement（成就）", "Application（应用）", "Assessment（评估）"],
+                        correct: 0,
+                        type: "single",
+                        explanation: "ARCS模型由Keller提出，'A'代表Attention（注意），即通过唤起学习者的兴趣和好奇心来维持注意。"
+                    },
+                    {
+                        question: "用户体验（UX）设计的核心原则是什么？",
+                        options: ["技术优先", "用户需求为中心", "美观为主", "功能越多越好"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "用户体验设计的核心原则是以用户需求为中心，追求易用性、有效性和愉悦感，让产品或服务真正服务于用户。"
+                    },
+                    {
+                        question: "以用户为中心的设计（UCD）流程包括？（多选）",
+                        options: ["用户研究", "需求分析", "原型设计", "用户测试", "快速迭代"],
+                        correct: [0, 1, 2, 3, 4],
+                        type: "multiple",
+                        explanation: "以用户为中心的设计是一个迭代过程，包括用户研究、需求分析、原型设计、用户测试，并根据反馈快速迭代优化。"
+                    },
+                    {
+                        question: "以下哪项不是增强用户动机的策略？",
+                        options: ["设置明确目标", "提供即时反馈", "增加考试压力", "给予适当奖励"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "增强动机应采用积极策略：设置明确目标、提供即时反馈、给予适当奖励。增加考试压力可能适得其反，增加学习焦虑。"
+                    },
+                    {
+                        question: "认知负荷理论认为哪种负荷应该最小化？",
+                        options: ["内在认知负荷", "外在认知负荷", "相关认知负荷", "工作记忆负荷"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "认知负荷理论将认知负荷分为内在、外在和相关三类，其中外在认知负荷（由不良教学设计导致）应该最小化。"
+                    }
+                ]
+            },
+            6: {
+                title: "学习者体验",
+                questions: [
+                    {
+                        question: "学习者体验（LX）设计关注什么？",
+                        options: ["技术功能", "学习者的整体感受", "界面美观", "系统性能"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "学习者体验设计关注学习者在学习过程中的整体感受，包括情感、动机、认知投入等多方面因素。"
+                    },
+                    {
+                        question: "以下哪项影响学习者体验的关键因素？",
+                        options: ["学习内容的呈现方式", "学习活动的互动性", "学习反馈的及时性", "以上都是"],
+                        correct: 3,
+                        type: "single",
+                        explanation: "学习者体验受多种因素影响，包括学习内容的呈现方式、学习活动的互动性、学习反馈的及时性等综合因素。"
+                    },
+                    {
+                        question: "沉浸式学习环境的特点包括？（多选）",
+                        options: ["高度交互", "情境真实", "即时反馈", "单一路径"],
+                        correct: [0, 1, 2],
+                        type: "multiple",
+                        explanation: "沉浸式学习环境具有高度交互、情境真实、即时反馈等特点，让学习者能够身临其境地学习，而非线性单一路径。"
+                    },
+                    {
+                        question: "自适应学习系统的主要功能是什么？",
+                        options: ["自动评分", "根据学习者表现调整内容", "监控学习时间", "管理学习数据"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "自适应学习系统能够根据学习者的表现、能力水平和学习行为，动态调整学习内容和路径，实现个性化学习。"
+                    },
+                    {
+                        question: "学习分析中'学习者建模'的目的是什么？",
+                        options: ["评估教师表现", "预测学习结果", "设计课程", "管理学籍"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "学习者建模通过收集和分析学习行为数据，构建学习者特征的数字化模型，用于预测学习结果和支持个性化推荐。"
+                    }
+                ]
+            },
+            7: {
+                title: "教育技术的社会学习视角",
+                questions: [
+                    {
+                        question: "班杜拉（Albert Bandura）的社会学习理论强调什么？",
+                        options: ["纯粹行为强化", "观察学习和自我效能感", "内在心理特征", "环境决定论"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "班杜拉的社会学习理论强调观察学习和自我效能感，认为人们通过观察他人行为及其后果来学习。"
+                    },
+                    {
+                        question: "协作学习的基本要素包括？（多选）",
+                        options: ["积极互赖", "个人责任", "社交技能", "小组反思", "竞争对抗"],
+                        correct: [0, 1, 2, 3],
+                        type: "multiple",
+                        explanation: "协作学习的基本要素包括：积极互赖（相互依存）、个人责任、社交技能和小组反思。竞争对抗不是协作学习的要素。"
+                    },
+                    {
+                        question: "学习社区的核心特征是什么？",
+                        options: ["固定学习时间", "共同目标和成员互动", "单一教师讲授", "标准化学习内容"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "学习社区的核心特征是成员拥有共同目标，通过持续的互动和对话来建构知识，分享学习经验。"
+                    },
+                    {
+                        question: "计算机支持的协作学习（CSCL）的主要特点是什么？",
+                        options: ["独立学习", "面对面交流为主", "技术支持的群体学习", "竞争性学习"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "CSCL利用计算机和网络技术支持群体学习，促进不同地理位置的学习者进行协作和知识建构。"
+                    },
+                    {
+                        question: "在社会学习环境中，教师角色发生了什么变化？",
+                        options: ["完全消失", "知识传授者", "学习促进者和引导者", "考试监督者"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "在社会学习环境中，教师从知识传授者转变为学习促进者和引导者，更多地组织协作、促进讨论、给予支持。"
+                    }
+                ]
+            },
+            8: {
+                title: "学习活动与教学系统设计",
+                questions: [
+                    {
+                        question: "布鲁姆分类学的认知领域最高层次是什么？",
+                        options: ["理解", "应用", "分析", "创造"],
+                        correct: 3,
+                        type: "single",
+                        explanation: "布鲁姆认知领域分类从低到高为：记忆、理解、应用、分析、评价、创造。'创造'是最高层次。"
+                    },
+                    {
+                        question: "教学游戏设计应遵循什么原则？",
+                        options: ["娱乐至上", "学习目标与游戏机制平衡", "难度越高越好", "无需反馈"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "教学游戏设计应平衡学习目标与游戏机制，确保游戏服务于学习目标，而非纯粹追求娱乐性。"
+                    },
+                    {
+                        question: "认知负荷理论建议的教学设计原则包括？（多选）",
+                        options: ["减少外在负荷", "管理内在负荷", "增加学习时间", "促进相关负荷"],
+                        correct: [0, 1, 3],
+                        type: "multiple",
+                        explanation: "认知负荷理论建议：减少不必要的外部认知负荷；合理拆分复杂的内部负荷；促进能加深理解的相关认知负荷。"
+                    },
+                    {
+                        question: "基于问题的学习（PBL）的核心特征是什么？",
+                        options: ["教师讲授为主", "以问题为学习驱动", "记忆大量知识", "避免真实情境"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "基于问题的学习以真实问题为学习驱动，学习者在解决问题的过程中建构知识，培养问题解决能力。"
+                    },
+                    {
+                        question: "微课程（Microlecture）的时长一般为多久？",
+                        options: ["45分钟以上", "20-30分钟", "3-10分钟", "1分钟以内"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "微课程时长一般为3-10分钟，聚焦于一个知识点或概念，采用短小精悍的形式适应碎片化学习需求。"
+                    }
+                ]
+            },
+            9: {
+                title: "学习空间设计",
+                questions: [
+                    {
+                        question: "物理学习空间设计应考虑哪些因素？（多选）",
+                        options: ["桌椅布局", "照明条件", "技术支持", "噪音控制", "仅美观"],
+                        correct: [0, 1, 2, 3],
+                        type: "multiple",
+                        explanation: "物理学习空间设计需综合考虑桌椅布局、照明条件、技术支持、噪音控制等多方面因素，创造有利于学习的环境。"
+                    },
+                    {
+                        question: "智能学习环境（SLE）的核心特征是什么？",
+                        options: ["高端设备", "自适应与感知能力", "大规模空间", "复杂操作"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "智能学习环境具有自适应和感知能力，能够根据学习者的需求和状态智能调节学习支持和服务。"
+                    },
+                    {
+                        question: "PST框架（学习空间技术支持框架）包括哪些维度？",
+                        options: ["空间、技术、人员", "设计、实施、评估", "硬件、软件、人员", "目标、内容、方法"],
+                        correct: 0,
+                        type: "single",
+                        explanation: "PST框架（Pedagogy-Space-Technology）从空间、技术和人员三个维度来分析和设计学习环境。"
+                    },
+                    {
+                        question: "在线学习空间与面对面学习空间的主要区别是什么？",
+                        options: ["内容不同", "交互方式改变", "学习目标不同", "评价方式不同"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "在线学习空间与面对面学习空间的主要区别在于交互方式：在线空间依赖数字技术进行异步或同步交流。"
+                    },
+                    {
+                        question: "学习空间设计应首先考虑什么？",
+                        options: ["技术设备", "教学法与学习需求", "空间大小", "装修风格"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "学习空间设计应首先考虑教学法和学习需求，技术应服务于教育目标，而非反过来主导设计。"
+                    }
+                ]
+            },
+            10: {
+                title: "教育项目设计与评估",
+                questions: [
+                    {
+                        question: "逻辑模型（Logical Framework）用于什么目的？",
+                        options: ["财务管理", "项目规划与评估", "人员招聘", "设备采购"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "逻辑模型是一种项目规划和管理工具，用于清晰地描述项目各要素之间的关系，支持项目的设计与评估。"
+                    },
+                    {
+                        question: "教育项目评估的类型包括？（多选）",
+                        options: ["需求评估", "过程评估", "结果评估", "效益评估", "仅总结性评估"],
+                        correct: [0, 1, 2, 3],
+                        type: "multiple",
+                        explanation: "教育项目评估包括需求评估（项目前）、过程评估（项目中）和结果评估（项目后），以及效益评估等多种类型。"
+                    },
+                    {
+                        question: "柯克帕特里克四层次评估模型中，第一层评估的是什么？",
+                        options: ["学习效果", "行为改变", "反应/满意度", "投资回报率"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "柯克帕特里克模型第一层评估'反应'，即学习者对培训项目的满意程度；第二层评估学习效果，以此类推。"
+                    },
+                    {
+                        question: "教育项目可行性分析应考虑哪些方面？",
+                        options: ["技术可行性", "经济可行性", "社会可行性", "以上都是"],
+                        correct: 3,
+                        type: "single",
+                        explanation: "教育项目可行性分析应综合考虑技术可行性、经济可行性、社会可行性等多方面因素。"
+                    },
+                    {
+                        question: "平衡计分卡在教育项目管理中的应用维度包括？",
+                        options: ["财务维度", "用户维度", "内部流程维度", "学习与成长维度", "以上都是"],
+                        correct: 4,
+                        type: "single",
+                        explanation: "平衡计分卡在教育领域应用包括财务维度、用户维度、内部流程维度和学习与成长维度四个方面。"
+                    }
+                ]
+            },
+            11: {
+                title: "设计型研究",
+                questions: [
+                    {
+                        question: "设计型研究（Design-Based Research）的核心特征是什么？",
+                        options: ["纯理论研究", "在真实情境中改进实践", "实验室控制实验", "问卷调查方法"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "设计型研究的核心特征是在真实教育情境中进行研究，通过迭代设计-实施-评估-修改的过程，同时产生实践改进和理论贡献。"
+                    },
+                    {
+                        question: "设计型研究的主要目的是什么？",
+                        options: ["验证假设", "发展和改进教育干预", "描述现象", "解释因果关系"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "设计型研究的主要目的是通过迭代设计过程发展和改进教育实践，同时生成可迁移的设计原则和理论。"
+                    },
+                    {
+                        question: "设计型研究的基本流程包括？（多选）",
+                        options: ["分析实践问题", "开发干预方案", "实施与评估", "迭代改进", "仅做一次就结束"],
+                        correct: [0, 1, 2, 3],
+                        type: "multiple",
+                        explanation: "设计型研究是一个迭代循环过程，包括分析实践问题、开发干预方案，实施与评估，并根据反馈迭代改进。"
+                    },
+                    {
+                        question: "设计型研究与其他教育研究方法的主要区别是什么？",
+                        options: ["研究场所不同", "研究目的和过程的差异", "样本量不同", "数据分析方法不同"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "设计型研究与其他方法的主要区别在于它强调在真实情境中通过迭代设计过程同时产生实践改进和理论知识。"
+                    },
+                    {
+                        question: "设计型研究产出的'设计原则'具有什么特点？",
+                        options: ["只适用于特定情境", "可迁移和可复用", "固定不变", "纯理论无实践指导"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "设计型研究产出的设计原则具有可迁移性，可以指导在其他类似情境中的应用，而非仅适用于特定情境。"
+                    }
+                ]
+            },
+            12: {
+                title: "设计方法论",
+                questions: [
+                    {
+                        question: "需求分析在教学设计中的主要作用是什么？",
+                        options: ["确定教学目标", "识别学习差距", "选择教学策略", "评估学习效果"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "需求分析的主要作用是识别当前状态与期望状态之间的差距，明确需要解决的教学问题和学习需求。"
+                    },
+                    {
+                        question: "用户研究方法包括哪些？（多选）",
+                        options: ["访谈", "问卷调查", "观察", "A/B测试", "头脑风暴"],
+                        correct: [0, 1, 2, 3],
+                        type: "multiple",
+                        explanation: "用户研究常用方法包括访谈、问卷调查、观察、A/B测试等，头脑风暴属于创意设计方法而非用户研究方法。"
+                    },
+                    {
+                        question: "竞争分析在教育产品设计中的目的是什么？",
+                        options: ["复制对手产品", "了解市场定位和差异化机会", "降低开发成本", "减少营销投入"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "竞争分析帮助了解市场上同类产品的特点、优势和不足，发现差异化机会，指导产品定位和设计方向。"
+                    },
+                    {
+                        question: "原型设计在设计流程中的作用是什么？",
+                        options: ["最终产品", "快速验证概念和获取反馈", "降低设计成本", "替代用户研究"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "原型设计用于在投入开发前快速验证设计概念，通过低保真或高保真原型获取用户反馈，及时调整设计方向。"
+                    },
+                    {
+                        question: "设计思维的五个阶段是什么？",
+                        options: ["同理心、定义、构思、原型、测试", "分析、设计、开发、测试、发布", "研究、规划、实施、监控、评估", "想象、评估、构建、展示、迭代"],
+                        correct: 0,
+                        type: "single",
+                        explanation: "设计思维（IDEO提出）包括五个阶段：同理心（Empathize）、定义（Define）、构思（Ideate）、原型（Prototype）、测试（Test）。"
+                    }
+                ]
+            },
+            13: {
+                title: "教育技术的新兴问题",
+                questions: [
+                    {
+                        question: "人工智能在教育领域的主要应用包括？（多选）",
+                        options: ["智能辅导系统", "自动评分", "学习推荐", "情感分析", "完全替代教师"],
+                        correct: [0, 1, 2, 3],
+                        type: "multiple",
+                        explanation: "AI在教育中的应用包括智能辅导、自动评分、学习推荐、情感分析等，但AI是辅助而非完全替代教师。"
+                    },
+                    {
+                        question: "学习分析（Learning Analytics）的定义是什么？",
+                        options: ["分析考试成绩", "测量学习态度", "对学习者及其情境的数据测量、分析和报告", "监控学生出勤"],
+                        correct: 2,
+                        type: "single",
+                        explanation: "学习分析是对学习者及其情境的数据进行测量、收集、分析和报告，旨在理解和优化学习及其发生的环境。"
+                    },
+                    {
+                        question: "教育大数据带来的主要伦理挑战包括？",
+                        options: ["数据隐私保护", "算法偏见", "数据滥用风险", "以上都是"],
+                        correct: 3,
+                        type: "single",
+                        explanation: "教育大数据带来数据隐私保护、算法偏见、数据滥用风险等多方面伦理挑战，需要建立相应的伦理框架。"
+                    },
+                    {
+                        question: "增强现实（AR）在教育中的优势是什么？",
+                        options: ["提供沉浸式学习体验", "叠加虚拟信息到现实世界", "增强学习者理解", "以上都是"],
+                        correct: 3,
+                        type: "single",
+                        explanation: "AR教育应用的优势包括提供沉浸式学习体验、将虚拟信息叠加到现实世界、增强学习者对抽象概念的理解。"
+                    },
+                    {
+                        question: "教育技术伦理应遵循的核心原则是什么？",
+                        options: ["技术效率最大化", "人的尊严与公平", "商业利益优先", "数据收集最大化"],
+                        correct: 1,
+                        type: "single",
+                        explanation: "教育技术伦理应遵循人的尊严与公平原则，确保技术服务于教育，促进所有学习者的全面发展，而非单纯追求技术效率或商业利益。"
+                    }
+                ]
+            }
+        };
+
+        // 从URL参数获取章节ID
+        const urlParams = new URLSearchParams(window.location.search);
+        let currentChapter = parseInt(urlParams.get('chapter')) || 1;
+        let questions = allQuizzes[currentChapter] ? allQuizzes[currentChapter].questions : allQuizzes[1].questions;
+        let quizTitle = allQuizzes[currentChapter] ? allQuizzes[currentChapter].title : allQuizzes[1].title;
+
+        let currentQuestion = 0;
+        let answers = [];
+        let answered = false;
+
+        function renderQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('chapterBadge').textContent = `第${currentChapter}章 · 章节测验`;
+            document.getElementById('quizTitle').textContent = quizTitle;
+            document.getElementById('questionNum').textContent = currentQuestion + 1;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('questionType').textContent = q.type === 'multiple' ? '多选题' : '单选题';
+            document.getElementById('progressFill').style.width = ((currentQuestion) / questions.length * 100) + '%';
+            document.getElementById('progressText').textContent = `第 ${currentQuestion + 1}/${questions.length} 题`;
+            document.getElementById('explanationBox').classList.remove('show');
+
+            let optionsHtml = '';
+            q.options.forEach((opt, i) => {
+                optionsHtml += `
+                    <div class="option-item" onclick="selectOption(${i})">
+                        <div class="option-checkbox"></div>
+                        <span class="option-text">${opt}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('optionsList').innerHTML = optionsHtml;
+
+            document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? '查看结果' : '下一题 →';
+
+            answered = false;
+            answers[currentQuestion] = q.type === 'multiple' ? [] : null;
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+
+            const q = questions[currentQuestion];
+            const options = document.querySelectorAll('.option-item');
+
+            if (q.type === 'multiple') {
+                if (!Array.isArray(answers[currentQuestion])) {
+                    answers[currentQuestion] = [];
+                }
+                const idx = answers[currentQuestion].indexOf(index);
+                if (idx > -1) {
+                    answers[currentQuestion].splice(idx, 1);
+                    options[index].classList.remove('selected');
+                } else {
+                    answers[currentQuestion].push(index);
+                    options[index].classList.add('selected');
+                }
+            } else {
+                answers[currentQuestion] = index;
+                options.forEach(opt => opt.classList.remove('selected'));
+                options[index].classList.add('selected');
+            }
+
+            answered = true;
+            showExplanation();
+        }
+
+        function showExplanation() {
+            const q = questions[currentQuestion];
+            document.getElementById('explanationText').textContent = q.explanation;
+            document.getElementById('explanationBox').classList.add('show');
+
+            const options = document.querySelectorAll('.option-item');
+            if (q.type === 'multiple') {
+                q.correct.forEach(c => {
+                    options[c].classList.add('correct');
+                });
+                if (Array.isArray(answers[currentQuestion])) {
+                    answers[currentQuestion].forEach(a => {
+                        if (!q.correct.includes(a)) {
+                            options[a].classList.add('wrong');
+                        }
+                    });
+                }
+            } else {
+                options[q.correct].classList.add('correct');
+                if (answers[currentQuestion] !== q.correct) {
+                    options[answers[currentQuestion]].classList.add('wrong');
+                }
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            let correct = 0;
+            questions.forEach((q, i) => {
+                if (q.type === 'multiple') {
+                    if (Array.isArray(answers[i]) && answers[i].length === q.correct.length &&
+                        answers[i].every(a => q.correct.includes(a))) {
+                        correct++;
+                    }
+                } else if (answers[i] === q.correct) {
+                    correct++;
+                }
+            });
+
+            const score = Math.round(correct / questions.length * 100);
+            const isLastChapter = currentChapter >= 13;
+            const nextChapter = currentChapter + 1;
+
+            let actionButtons = '';
+            if (isLastChapter) {
+                // 最后一章，显示返回课程
+                actionButtons = `
+                    <button class="btn btn-primary" style="margin-right: 1rem;" onclick="retryQuiz()">重新测验</button>
+                    <a href="course.html" class="nav-btn">🎓 返回课程</a>
+                `;
+            } else {
+                // 非最后一章，显示进入下一章节
+                actionButtons = `
+                    <button class="btn btn-primary" style="margin-right: 1rem;" onclick="retryQuiz()">重新测验</button>
+                    <a href="video-learning.html?chapter=${nextChapter}" class="nav-btn" style="background: var(--secondary-color); color: white;">➡️ 进入第${nextChapter}章 →</a>
+                `;
+            }
+
+            document.getElementById('quizContent').innerHTML = `
+                <div class="result-card">
+                    <div class="result-icon">${score >= 60 ? '🎉' : '📚'}</div>
+                    <div class="result-score">${score}分</div>
+                    <div class="result-text">${score >= 60 ? '恭喜你通过了测验！' : '继续加油，再试一次吧！'}</div>
+                    <div class="result-detail">
+                        <div class="detail-item">
+                            <div class="detail-value">${correct}</div>
+                            <div class="detail-label">正确题数</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">${questions.length - correct}</div>
+                            <div class="detail-label">错误题数</div>
+                        </div>
+                    </div>
+                    ${actionButtons}
+                </div>
+            `;
+
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('progressText').textContent = '测验完成';
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function retryQuiz() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('nextBtn').style.display = 'block';
+            renderQuestion();
+        }
+
+        function postQuizComment() {
+            const input = document.getElementById('quizCommentInput');
+            if (!input.value.trim()) return;
+
+            const discussionSection = document.querySelector('.discussion-section');
+            const newComment = document.createElement('div');
+            newComment.className = 'discussion-item';
+            newComment.innerHTML = '<div class="author">张同学（你）</div><div class="content">' + input.value + '</div>';
+            discussionSection.insertBefore(newComment, discussionSection.querySelector('.post-input-container'));
+            input.value = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderQuestion();
+        });
+
+        try {
+            renderQuestion();
+        } catch (e) {
+            console.error('Error rendering question:', e);
+        }
+    </script>
+    <script>const floatingAIHTML=`<div id="floatingAI" style="position:fixed;bottom:20px;right:20px;z-index:9999;"><div id="floatingAIBtn" onclick="toggleFloatingAI()" style="width:56px;height:56px;background:linear-gradient(135deg,#1a365d,#2d4a6f);border-radius:50%;box-shadow:0 4px 16px rgba(26,54,93,0.4);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.5rem;transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 6px 20px rgba(26,54,93,0.5)';" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 16px rgba(26,54,93,0.4)';">🤖</div><div id="floatingAIPanel" style="display:none;position:absolute;bottom:70px;right:0;width:380px;height:520px;background:white;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.15);overflow:hidden;flex-direction:column;"><div style="background:linear-gradient(135deg,#1a365d,#2d4a6f);color:white;padding:1rem;display:flex;align-items:center;justify-content:space-between;"><div style="display:flex;align-items:center;gap:.75rem;"><span style="font-size:1.5rem;">🤖</span><div><div style="font-weight:bold;">学习伙伴</div><div style="font-size:.7rem;opacity:.8;">在线</div></div></div><button onclick="toggleFloatingAI()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;padding:.25rem;">✕</button></div><div id="floatingAIMessages" style="flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;"><div style="display:flex;gap:.75rem;align-items:flex-start;"><div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;line-height:1.5;">你好！我是学习伙伴，有什么可以帮你的吗？</div></div></div><div style="padding:.75rem;border-top:1px solid #eee;display:flex;gap:.5rem;"><input type="text" id="floatingAIInput" placeholder="输入问题..." style="flex:1;padding:.75rem;border:1px solid #ddd;border-radius:8px;font-size:.85rem;" onkeypress="if(event.key==='Enter') sendFloatingAIMessage()"><button onclick="sendFloatingAIMessage()" style="background:#1a365d;color:white;border:none;border-radius:8px;padding:.75rem 1rem;cursor:pointer;font-size:.85rem;">发送</button></div></div></div>`;document.write(floatingAIHTML);function toggleFloatingAI(){const panel=document.getElementById('floatingAIPanel');const btn=document.getElementById('floatingAIBtn');if(panel.style.display==='none'){panel.style.display='flex';btn.textContent='✕';}else{panel.style.display='none';btn.textContent='🤖';}}let floatingAIFullContent='';function sendFloatingAIMessage(){const input=document.getElementById('floatingAIInput');const message=input.value.trim();if(!message)return;const chatMessages=document.getElementById('floatingAIMessages');const userMsg=document.createElement('div');userMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;justify-content:flex-end;';userMsg.innerHTML=`<div style="background:#1a365d;color:white;padding:.75rem;border-radius:8px;border-top-right-radius:2px;max-width:80%;font-size:.85rem;">${message}</div><div style="width:32px;height:32px;background:#1a365d;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;">👤</div>`;chatMessages.appendChild(userMsg);const botMsg=document.createElement('div');botMsg.style.cssText='display:flex;gap:.75rem;align-items:flex-start;';botMsg.innerHTML=`<div style="width:32px;height:32px;background:#48bb78;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;">📚</div><div style="background:#f7fafc;padding:.75rem;border-radius:8px;border-top-left-radius:2px;max-width:80%;font-size:.85rem;" id="floatingAIResponse"><span class="thinking-dots">正在思考<span>.</span></span></div>`;chatMessages.appendChild(botMsg);chatMessages.scrollTop=chatMessages.scrollHeight;input.value='';let thinkingInterval=setInterval(()=>{const dots=botMsg.querySelector('.thinking-dots');if(dots){const text=dots.textContent;dots.innerHTML=text.endsWith('...')?'正在思考':text+'.';}},500);const responseText=botMsg.querySelector('#floatingAIResponse');floatingAIFullContent='';fetch('http://localhost:8000/api/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:'student_001',message:message})}).then(response=>{if(!response.ok)throw new Error('API请求失败');const reader=response.body.getReader();const decoder=new TextDecoder();function read(){reader.read().then(({done,value})=>{if(done){clearInterval(thinkingInterval);return;}const chunk=decoder.decode(value,{stream:true});const lines=chunk.split('\n');for(const line of lines){if(line.startsWith('data:')){try{const data=JSON.parse(line.slice(5));if(data.content){clearInterval(thinkingInterval);floatingAIFullContent+=data.content;responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}<span class="cursor">|</span></div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.done){responseText.innerHTML=`<div style="white-space:pre-wrap;">${floatingAIFullContent}</div>`;chatMessages.scrollTop=chatMessages.scrollHeight;}if(data.error){clearInterval(thinkingInterval);responseText.innerHTML=`抱歉出现问题: ${data.error}`;}}catch(e){}}}if(!done)read();});}read();}).catch(error=>{clearInterval(thinkingInterval);responseText.innerHTML=`连接失败: ${error.message}`;});}</script>
+</body>
+</html>

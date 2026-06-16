@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>课程管理 - 国家开放大学教育技术学课程</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .chapter-manage-card {
+            background: var(--hover-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        .chapter-manage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+        .chapter-manage-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .chapter-number {
+            width: 32px;
+            height: 32px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .resource-count {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .resource-count span {
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            background: white;
+            border-radius: 4px;
+            color: var(--text-light);
+        }
+        .resource-count span.video { color: #e53e3e; }
+        .resource-count span.doc { color: #3182ce; }
+        .resource-count span.quiz { color: #38a169; }
+        .resource-count span.hw { color: #d69e2e; }
+        .upload-progress {
+            height: 4px;
+            background: var(--hover-bg);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .upload-progress-fill {
+            height: 100%;
+            background: var(--secondary-color);
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stats-item {
+            background: var(--hover-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stats-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        .stats-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div>
+                    <h1>教师端</h1>
+                    <p>张老师</p>
+                </div>
+                <a href="../index.html" class="logout-btn">退出登录</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">教学管理</div>
+                <a href="index.html" class="nav-item">
+                    <span class="icon">📊</span>
+                    <span>学情总览</span>
+                </a>
+                <a href="course-management.html" class="nav-item active">
+                    <span class="icon">📚</span>
+                    <span>课程管理</span>
+                </a>
+                <a href="collaboration.html" class="nav-item">
+                    <span class="icon">👥</span>
+                    <span>协作分析</span>
+                </a>
+                <a href="ai-monitoring.html" class="nav-item">
+                    <span class="icon">🤖</span>
+                    <span>智能体监控</span>
+                </a>
+                <a href="suggestions.html" class="nav-item">
+                    <span class="icon">💡</span>
+                    <span>教学改进建议</span>
+                </a>
+            </div>
+            <div class="nav-section" style="margin-top: auto;">
+                <div class="nav-section-title">返回</div>
+                <a href="../index.html" class="nav-item">
+                    <span class="icon">🏠</span>
+                    <span>返回首页</span>
+                </a>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1>课程管理</h1>
+                <p>上传和管理课程资源</p>
+            </div>
+
+            <div class="stats-row">
+                <div class="stats-item">
+                    <div class="stats-value">24</div>
+                    <div class="stats-label">视频资源</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-value">18</div>
+                    <div class="stats-label">文档资源</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-value">7</div>
+                    <div class="stats-label">章节测验</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-value">86%</div>
+                    <div class="stats-label">资源完整度</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">📤 上传新资源</h2>
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📁</div>
+                    <h3>点击上传文件</h3>
+                    <p style="color: var(--text-light); font-size: 0.85rem;">支持 PDF、Word、PPT、视频等格式，单文件不超过500MB</p>
+                    <input type="file" id="fileInput" style="display: none;" onchange="handleFileSelect(this)">
+                </div>
+                <div id="uploadForm" style="margin-top: 1rem; display: none;">
+                    <div style="padding: 1rem; background: var(--hover-bg); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 48px; height: 48px; background: var(--secondary-color); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;" id="fileIcon">📄</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold;" id="fileName">filename.pdf</div>
+                                <div style="font-size: 0.8rem; color: var(--text-light);" id="fileSize">2.5 MB</div>
+                                <div class="upload-progress">
+                                    <div class="upload-progress-fill" id="uploadProgress" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--text-color);">资源名称</label>
+                            <input type="text" id="resourceName" style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div>
+                                <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--text-color);">所属章节</label>
+                                <select style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;">
+                                    <option>第一章 教育技术学概述</option>
+                                    <option>第二章 教学设计基础</option>
+                                    <option>第三章 在线教学策略</option>
+                                    <option>第四章 互动工具应用</option>
+                                    <option>第五章 学习评价方法</option>
+                                    <option>第六章 教育资源开发</option>
+                                    <option>第七章 AI教育应用</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--text-color);">资源类型</label>
+                                <select style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;">
+                                    <option>视频</option>
+                                    <option>文档</option>
+                                    <option>课件</option>
+                                    <option>参考资料</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;" onclick="uploadResource()">确认上传</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">📚 课程资源列表</h2>
+                <div style="margin-bottom: 1rem;">
+                    <input type="text" placeholder="搜索资源..." style="width: 100%; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem;">
+                </div>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <div class="resource-icon">🎬</div>
+                        <div class="resource-info">
+                            <h4>第一章 课程介绍视频</h4>
+                            <p>第一章 · 视频 · 15分钟 · 上传于 2026-03-01 · 下载 234次</p>
+                        </div>
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-secondary">删除</button>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📄</div>
+                        <div class="resource-info">
+                            <h4>教育技术学概论 PPT</h4>
+                            <p>第一章 · 课件 · 3.2 MB · 上传于 2026-03-01 · 下载 189次</p>
+                        </div>
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-secondary">删除</button>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📄</div>
+                        <div class="resource-info">
+                            <h4>ADDIE模型详解文档</h4>
+                            <p>第二章 · 文档 · 1.8 MB · 上传于 2026-03-05 · 下载 156次</p>
+                        </div>
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-secondary">删除</button>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🎬</div>
+                        <div class="resource-info">
+                            <h4>在线教学策略演示视频</h4>
+                            <p>第三章 · 视频 · 25分钟 · 上传于 2026-03-10 · 下载 98次</p>
+                        </div>
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-secondary">删除</button>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📄</div>
+                        <div class="resource-info">
+                            <h4>互动工具使用指南</h4>
+                            <p>第四章 · 参考资料 · 2.1 MB · 上传于 2026-03-12 · 下载 87次</p>
+                        </div>
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-secondary">删除</button>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📄</div>
+                        <div class="resource-info">
+                            <h4>学习评价量表模板</h4>
+                            <p>第五章 · 文档 · 0.5 MB · 上传于 2026-03-15 · 下载 112次</p>
+                        </div>
+                        <button class="btn btn-secondary">编辑</button>
+                        <button class="btn btn-secondary">删除</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">📋 章节结构管理</h2>
+                <div class="chapter-manage-card">
+                    <div class="chapter-manage-header">
+                        <div class="chapter-manage-title">
+                            <div class="chapter-number">1</div>
+                            <div>
+                                <strong>教育技术学概述</strong>
+                                <div class="resource-count">
+                                    <span class="video">🎬 3</span>
+                                    <span class="doc">📄 2</span>
+                                    <span class="quiz">📋 1</span>
+                                    <span class="hw">✍️ 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('进入第一章管理')">管理</button>
+                    </div>
+                </div>
+                <div class="chapter-manage-card">
+                    <div class="chapter-manage-header">
+                        <div class="chapter-manage-title">
+                            <div class="chapter-number">2</div>
+                            <div>
+                                <strong>教学设计基础</strong>
+                                <div class="resource-count">
+                                    <span class="video">🎬 4</span>
+                                    <span class="doc">📄 3</span>
+                                    <span class="quiz">📋 1</span>
+                                    <span class="hw">✍️ 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('进入第二章管理')">管理</button>
+                    </div>
+                </div>
+                <div class="chapter-manage-card">
+                    <div class="chapter-manage-header">
+                        <div class="chapter-manage-title">
+                            <div class="chapter-number">3</div>
+                            <div>
+                                <strong>在线教学策略</strong>
+                                <div class="resource-count">
+                                    <span class="video">🎬 3</span>
+                                    <span class="doc">📄 2</span>
+                                    <span class="quiz">📋 1</span>
+                                    <span class="hw">✍️ 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('进入第三章管理')">管理</button>
+                    </div>
+                </div>
+                <div class="chapter-manage-card">
+                    <div class="chapter-manage-header">
+                        <div class="chapter-manage-title">
+                            <div class="chapter-number">4</div>
+                            <div>
+                                <strong>互动工具应用</strong>
+                                <div class="resource-count">
+                                    <span class="video">🎬 2</span>
+                                    <span class="doc">📄 2</span>
+                                    <span class="quiz">📋 1</span>
+                                    <span class="hw">✍️ 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('进入第四章管理')">管理</button>
+                    </div>
+                </div>
+                <div class="chapter-manage-card">
+                    <div class="chapter-manage-header">
+                        <div class="chapter-manage-title">
+                            <div class="chapter-number">5</div>
+                            <div>
+                                <strong>学习评价方法</strong>
+                                <div class="resource-count">
+                                    <span class="video">🎬 3</span>
+                                    <span class="doc">📄 2</span>
+                                    <span class="quiz">📋 1</span>
+                                    <span class="hw">✍️ 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('进入第五章管理')">管理</button>
+                    </div>
+                </div>
+                <div class="chapter-manage-card">
+                    <div class="chapter-manage-header">
+                        <div class="chapter-manage-title">
+                            <div class="chapter-number">6</div>
+                            <div>
+                                <strong>教育资源开发</strong>
+                                <div class="resource-count">
+                                    <span class="video">🎬 4</span>
+                                    <span class="doc">📄 3</span>
+                                    <span class="quiz">📋 1</span>
+                                    <span class="hw">✍️ 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('进入第六章管理')">管理</button>
+                    </div>
+                </div>
+                <div class="chapter-manage-card">
+                    <div class="chapter-manage-header">
+                        <div class="chapter-manage-title">
+                            <div class="chapter-number">7</div>
+                            <div>
+                                <strong>AI教育应用</strong>
+                                <div class="resource-count">
+                                    <span class="video">🎬 3</span>
+                                    <span class="doc">📄 2</span>
+                                    <span class="quiz">📋 1</span>
+                                    <span class="hw">✍️ 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="alert('进入第七章管理')">管理</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function handleFileSelect(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const fileName = file.name;
+                const fileSize = (file.size / 1024 / 1024).toFixed(2) + ' MB';
+
+                let icon = '📄';
+                if (file.type.startsWith('video/')) {
+                    icon = '🎬';
+                } else if (file.type.startsWith('image/')) {
+                    icon = '🖼️';
+                }
+
+                document.getElementById('fileIcon').textContent = icon;
+                document.getElementById('fileName').textContent = fileName;
+                document.getElementById('fileSize').textContent = fileSize;
+                document.getElementById('resourceName').value = fileName.substring(0, fileName.lastIndexOf('.'));
+                document.getElementById('uploadForm').style.display = 'block';
+
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 30;
+                    if (progress > 100) progress = 100;
+                    document.getElementById('uploadProgress').style.width = progress + '%';
+                    if (progress >= 100) {
+                        clearInterval(progressInterval);
+                    }
+                }, 200);
+            }
+        }
+
+        function uploadResource() {
+            const resourceName = document.getElementById('resourceName').value;
+            if (!resourceName) {
+                alert('请输入资源名称');
+                return;
+            }
+            alert('资源上传成功！');
+            document.getElementById('uploadForm').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('uploadProgress').style.width = '0%';
+        }
+    </script>
+</body>
+</html>
